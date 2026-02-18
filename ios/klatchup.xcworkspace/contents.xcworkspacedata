@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:klatchup.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:klatchup/AppDelegate.h">
+   </FileRef>
+   <FileRef
+      location = "group:klatchup/AppDelegate.mm">
+   </FileRef>
+   <FileRef
+      location = "group:klatchup/main.m">
+   </FileRef>
+</Workspace>
