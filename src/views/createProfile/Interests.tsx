@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import Fonts from '../../theme/Fonts';
-import Colors from '../../theme/Colors';
+import { Alert, StyleSheet, Text, View, ScrollView } from 'react-native'
+import { DesignSystem } from '../../theme/DesignSystem';
 import Heading from '../../components/Heading';
 import Chip from '../../components/Chip'
 import Button from '../../components/Button'
@@ -12,9 +11,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textSubHeading: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     marginVertical: 10,
   },
   containerInterests: {
@@ -82,6 +81,10 @@ const Interests = ({ onPressNext, formData = defaultFormData }: Props) => {
 
 
   const onPressContinue = () => {
+    if (selectedInterests.length < 3) {
+      Alert.alert('Minimum Interests Required', 'Please select at least 3 topics of interest to continue.');
+      return;
+    }
     onPressNext({ interests });
   };
 

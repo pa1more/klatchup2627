@@ -7,8 +7,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
-import Fonts from '../theme/Fonts'
-import Colors from '../theme/Colors'
+import { DesignSystem } from '../theme/DesignSystem'
 import LinearGradient from 'react-native-linear-gradient'
 
 const styles = StyleSheet.create({
@@ -24,14 +23,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   text: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
     color: '#4D1469',
   },
   textSelected: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
   },
 });
 

@@ -1,7 +1,6 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
-import Colors from '../theme/Colors';
-import Fonts from '../theme/Fonts';
+import { DesignSystem } from '../theme/DesignSystem';
 
 const styles = StyleSheet.create({
   continer: {
@@ -10,10 +9,10 @@ const styles = StyleSheet.create({
   },
   textTitle: {
     flex: 1,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     textAlign: 'center',
     fontSize: 15,
-    fontFamily: Fonts.PromptMedium,
+    fontWeight: '500',
   },
   icon: {
     height: 24,
@@ -25,11 +24,11 @@ const styles = StyleSheet.create({
     transform: [{rotate: '180deg'}],
   },
   textDesctiption: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 14,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     borderWidth: 1,
-    borderColor: Colors.white,
+    borderColor: DesignSystem.colors.white,
     padding: 10,
     borderRadius: 20,
     marginVertical: 5,

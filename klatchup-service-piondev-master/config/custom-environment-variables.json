@@ -1,0 +1,10 @@
+{
+  "server": {
+    "port": "SERVER_PORT"
+  },
+  "dbTables": {
+    "klatchup": {
+      "klatchup": "KLATCHUP_TABLE_NAME"
+    }
+  }
+}

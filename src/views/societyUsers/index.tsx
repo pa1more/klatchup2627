@@ -10,10 +10,9 @@ import {
 import ScreenWrapper from '../../components/ScreenWrapper';
 import ToolbarIcon from '../../components/ToolbarIcon';
 import { useNavigation } from '@react-navigation/native';
-import Colors from '../../theme/Colors';
-import Fonts from '../../theme/Fonts';
+import { DesignSystem } from '../../theme/DesignSystem';
 import UsersListItem from './UsersListItem';
-import ListEmptyComponent from '../../components/ListEmptyComponent';
+import EmptyState from '../../components/EmptyState';
 import AlertModal from '../../components/AlertModal';
 import { useDispatch, useSelector } from "react-redux";
 import { sampleAction, sampleSelector } from "../../slices/sample";
@@ -39,9 +38,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textLeave: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 16,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     textDecorationLine: 'underline',
   },
   list: {},
@@ -247,9 +246,12 @@ const SocietyUsersScreen = ({ route }: any) => {
         <FlatList
           data={listData}
           ListEmptyComponent={() => (
-            <ListEmptyComponent
-              title="Oops.. The profile list is empty."
-              message="Go to find the friends around you like."
+            <EmptyState
+              icon="🔍"
+              title="No People Found"
+              subtitle="There are no people around your location. Try expanding your search or visit another location!"
+              buttonText="Find Another Location"
+              onButtonPress={() => { /* Navigate to location selection */ }}
             />
           )}
           contentContainerStyle={styles.list}

@@ -1,13 +1,12 @@
 import React, { forwardRef } from 'react'
 import { StyleSheet, TextInput, TextInputProps } from 'react-native'
-import Fonts from '../theme/Fonts'
 
 const styles = StyleSheet.create({
   input: {
     backgroundColor: '#F2EAFF',
     paddingVertical: 12,
     borderRadius: 20,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 16,
     height: 48,
     paddingHorizontal: 18,

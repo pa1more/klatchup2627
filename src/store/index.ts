@@ -10,13 +10,25 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false, serializableCheck: false, }).concat(sagaMiddleware),
 });
-if (!store || typeof store.getState !== 'function') {
-  console.error('Store is undefined or invalid');
+
+// Verify store is properly initialized
+if (!store) {
+  throw new Error('Redux store failed to initialize');
+}
+
+if (typeof store.getState !== 'function') {
+  throw new Error('Redux store.getState is not a function');
 }
 
 console.log("Redux Store Initialized");
-sagaMiddleware.run(rootSaga);
-console.log("Saga Middleware Running...");
+
+try {
+  sagaMiddleware.run(rootSaga);
+  console.log("Saga Middleware Running...");
+} catch (error) {
+  console.error("Error starting saga middleware:", error);
+  throw error;
+}
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

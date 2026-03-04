@@ -369,8 +369,7 @@ import {
   Alert,
 } from 'react-native';
 import ScreenWrapper from '../../components/ScreenWrapper';
-import Fonts from '../../theme/Fonts';
-import Colors from '../../theme/Colors';
+import { DesignSystem } from '../../theme/DesignSystem';
 import Button from '../../components/Button';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import Input from '../../components/TextInput';
@@ -381,6 +380,7 @@ import { RootState } from '../../store';
 import {
   getMobileRequest,
   resetMobileExecuted,
+  setAuthToken,
 } from '../../slices/profile';
 import {
   getAuth,
@@ -397,14 +397,14 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   textHeading: {
-    fontFamily: Fonts.UnboundedMedium,
+    fontWeight: '600',
     fontSize: 24,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
   },
   textSubHeading: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     marginVertical: 10,
   },
   btn: {
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   textChange: {
     fontSize: 14,
     textDecorationLine: 'underline',
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
   },
 });
 
@@ -479,13 +479,32 @@ const VerifyOtp = () => {
   const signInWith_PhoneNumber = useCallback(async (phoneNumber: string) => {
     try {
       setFcmAuthVerifying(true);
+      setError('');
       const auth = getAuth();
       const confirmation = await signInWithPhoneNumber(auth, '+' + phoneNumber);
       setConfirm(confirmation);
       startTimer();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Phone Number Sign In Error:', err);
-      Alert.alert('Error', 'Failed to send OTP. Please try again.');
+      
+      // Handle specific Firebase error codes
+      if (err.code === 'auth/too-many-requests') {
+        Alert.alert(
+          'Too Many Requests',
+          'This device has been temporarily blocked due to unusual activity. Please try again after 30 minutes or use a different device.',
+          [{ text: 'OK' }]
+        );
+        setError('Device temporarily blocked. Try again later.');
+      } else if (err.code === 'auth/invalid-phone-number') {
+        Alert.alert('Invalid Phone Number', 'Please check the phone number and try again.');
+        setError('Invalid phone number format');
+      } else if (err.code === 'auth/network-request-failed') {
+        Alert.alert('Network Error', 'Please check your internet connection and try again.');
+        setError('Network connection failed');
+      } else {
+        Alert.alert('Error', 'Failed to send OTP. Please try again.');
+        setError('Failed to send OTP');
+      }
     } finally {
       setFcmAuthVerifying(false);
     }
@@ -497,12 +516,40 @@ const VerifyOtp = () => {
     setIsVerifying(true);
     setError('');
     try {
+      console.log('Verifying OTP:', otp.join(''));
       const userCredential = await confirm.confirm(otp.join(''));
-      console.log('User signed in successfully:', userCredential);
+      console.log('✓ User signed in successfully');
+      
+      // Extract Firebase ID token and store in Redux
+      if (userCredential && userCredential.user) {
+        const idToken = await userCredential.user.getIdToken();
+        if (idToken) {
+          console.log('✅ Firebase ID token obtained');
+          dispatch(setAuthToken(idToken));
+        } else {
+          console.warn('⚠️ Failed to get Firebase ID token');
+        }
+      } else {
+        console.warn('⚠️ User credential is null after verification');
+      }
+      
+      console.log('Dispatching getMobileRequest for:', mobileNumber);
       dispatch(getMobileRequest(mobileNumber));
-    } catch (err) {
+    } catch (err: any) {
       console.error('OTP verification failed:', err);
-      setError('Invalid OTP. Please try again.');
+      
+      if (err.code === 'auth/invalid-verification-code') {
+        setError('Invalid OTP. Please check and try again.');
+      } else if (err.code === 'auth/session-expired') {
+        setError('OTP expired. Please request a new one.');
+        Alert.alert('OTP Expired', 'The verification code has expired. Please request a new one.', [
+          { text: 'OK', onPress: () => setCanResend(true) }
+        ]);
+      } else if (err.code === 'auth/code-expired') {
+        setError('OTP expired. Please request a new one.');
+      } else {
+        setError('Invalid OTP. Please try again.');
+      }
     } finally {
       setIsVerifying(false);
     }
@@ -540,22 +587,43 @@ const VerifyOtp = () => {
     let isActive = true;
 
     const checkProfile = async () => {
-      if (!mobileExecuted || getprofile.length <= 0) return;
+      console.log('CheckProfile - mobileExecuted:', mobileExecuted);
+      console.log('CheckProfile - getprofile:', getprofile);
+      
+      if (!mobileExecuted) {
+        console.log('Waiting for mobileExecuted to be true');
+        return;
+      }
+      
+      if (!getprofile || Object.keys(getprofile).length === 0) {
+        console.log('No profile data yet');
+        return;
+      }
 
       setOtp(['', '', '', '', '', '']);
       inputRefs[0]?.current?.focus();
 
-      if ("profile" in getprofile && Object.keys(getprofile.profile).length > 0) {
+      // Check if profile exists (has profile field with data)
+      if ("profile" in getprofile && getprofile.profile && Object.keys(getprofile.profile).length > 0) {
+        console.log('Profile exists, navigating to Home');
         await AsyncStorage.setItem('MobileNo', mobileNumber);
         if (isActive) {
           dispatch(resetMobileExecuted());
-          navigation.navigate('Home');
+          (navigation as any).navigate('Home');
         }
-      } else if (getprofile.type === 'PROFILE_NOT_FOUND') {
+      }
+      // Check if it's a new user (various indicators)
+      else if (
+        getprofile.type === 'PROFILE_NOT_FOUND' || 
+        getprofile.message === 'Not Found' ||
+        !getprofile.profile ||
+        (Array.isArray(getprofile) && getprofile.length === 0)
+      ) {
+        console.log('Profile not found, navigating to CreateProfile');
         await AsyncStorage.setItem('MobileNo', mobileNumber);
         if (isActive) {
           dispatch(resetMobileExecuted());
-          navigation.navigate('CreateProfile');
+          (navigation as any).navigate('CreateProfile');
         }
       } else {
         console.log('Unknown response:', getprofile);
@@ -567,7 +635,7 @@ const VerifyOtp = () => {
     return () => {
       isActive = false;
     };
-  }, [mobileExecuted]);
+  }, [mobileExecuted, getprofile]);
 
   return (
     <ScreenWrapper>
@@ -578,7 +646,7 @@ const VerifyOtp = () => {
         </Text>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('EnterMobileNo')}
+          onPress={() => (navigation as any).navigate('EnterMobileNo')}
           style={styles.btnChange}
         >
           <GradientText
@@ -613,7 +681,6 @@ const VerifyOtp = () => {
           title="Verify"
           onPress={onPressVerify}
           disabled={!isValidOtp || isVerifying}
-          accessibilityLabel="Verify OTP button"
         />
 
         <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20 }}>

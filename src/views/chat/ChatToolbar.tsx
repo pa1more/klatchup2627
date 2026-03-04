@@ -1,9 +1,8 @@
 import { useNavigation } from '@react-navigation/native'
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import Colors from '../../theme/Colors'
+import { DesignSystem } from '../../theme/DesignSystem'
 import ToolbarIcon from '../../components/ToolbarIcon'
-import Fonts from '../../theme/Fonts'
 
 const styles = StyleSheet.create({
   container: {
@@ -23,10 +22,10 @@ const styles = StyleSheet.create({
     width: 25,
   },
   textTitle: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     textAlign: 'center',
     fontSize: 17,
-    fontFamily: Fonts.UnboundedRegular,
+    fontWeight: '400',
     marginLeft: 20,
   },
   image: {
@@ -47,14 +46,14 @@ const Toolbar = ({
   image = '',
   onPressReport,
 }: {
-  name: string
-  image: string
-  onPressReport: any
+  name?: string
+  image?: string
+  onPressReport?: () => void
 }) => {
 
   const navigation = useNavigation();
   const goBack = () => navigation.goBack();
-  const hasValidUrl = image && image.trim() !== '';
+  const hasValidUrl = typeof image === 'string' && image.trim() !== '';
 
   return (
     <View style={styles.container}>
@@ -69,7 +68,7 @@ const Toolbar = ({
       </View>
       <ToolbarIcon
         icon={require('../../assets/icons/ic_report.png')}
-        onPress={onPressReport}
+        onPress={onPressReport || (() => {})}
       />
     </View>
   );

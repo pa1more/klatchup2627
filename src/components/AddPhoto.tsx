@@ -1,7 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import Colors from '../theme/Colors'
-import Fonts from '../theme/Fonts'
 import LinearGradient from 'react-native-linear-gradient'
 
 const styles = StyleSheet.create({

@@ -2,8 +2,7 @@ import {View, Text, StyleSheet} from 'react-native'
 import React from 'react'
 import ScreenWrapper from '../../components/ScreenWrapper'
 import Toolbar from '../../components/Toolbar'
-import Fonts from '../../theme/Fonts'
-import Colors from '../../theme/Colors'
+import { DesignSystem } from '../../theme/DesignSystem'
 import SettingsOption from '../../components/SettingsOption'
 
 const styles = StyleSheet.create({
@@ -11,14 +10,14 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   textTitle: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 24,
-    fontFamily: Fonts.UnboundedMedium,
+    fontWeight: '600',
   },
   textsub: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 14,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     marginBottom: 20,
   },
 });

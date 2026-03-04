@@ -1,38 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, Image, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, Image, View, Alert } from 'react-native'
 import GradientBorderView from '../../components/GradientBorderView'
-import Colors from '../../theme/Colors';
-import Fonts from '../../theme/Fonts'
 import GradientText from '../../components/GradientText';
+import { DesignSystem } from '../../theme/DesignSystem';
 import { useDispatch, useSelector } from "react-redux";
 import { updateFreindProfileRequest, updateProfileRequest } from '../../slices/profile';
 import { RootState } from '../../store';
-import { ColorSpace } from 'react-native-reanimated';
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 20,
-    marginVertical: 5,
+    borderRadius: DesignSystem.borderRadius.xl,
+    marginVertical: DesignSystem.spacing.xs,
   },
   btn: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    backgroundColor: '#300943',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    paddingHorizontal: DesignSystem.spacing.md,
+    paddingVertical: DesignSystem.spacing.md,
+    backgroundColor: DesignSystem.colors.primary,
+    borderTopLeftRadius: DesignSystem.borderRadius.xl,
+    borderTopRightRadius: DesignSystem.borderRadius.xl,
   },
   imgDp: {
     height: 80,
     width: 80,
-    borderRadius: 20,
+    borderRadius: DesignSystem.borderRadius.xl,
   },
   containerDp: {
-    borderRadius: 20,
+    borderRadius: DesignSystem.borderRadius.xl,
   },
   textAge: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontFamily: DesignSystem.typography.fontFamily.primary,
     position: 'absolute',
     bottom: 0,
     right: 5,
@@ -43,54 +41,63 @@ const styles = StyleSheet.create({
   containerInterests: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginLeft: 10,
+    marginLeft: DesignSystem.spacing.md,
     flex: 1,
   },
   textName: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontFamily: DesignSystem.typography.fontFamily.primary,
     position: 'absolute',
-    top: 5,              // space from top
-    right: 5,            // space from right
-    maxWidth: '90%',     // prevent overflow from container
-    textAlign: 'right',  // align text to right edge
-    flexWrap: 'wrap',    // allow text to wrap
+    top: 5,
+    right: 5,
+    maxWidth: '90%',
+    textAlign: 'right',
+    flexWrap: 'wrap',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
   },
   containerInterest: {
-    marginHorizontal: 5,
+    marginHorizontal: DesignSystem.spacing.xs,
     borderWidth: 1,
-    borderColor: Colors.white,
-    borderRadius: 20,
-    paddingHorizontal: 5,
-    marginVertical: 4,
+    borderColor: DesignSystem.colors.white,
+    borderRadius: DesignSystem.borderRadius.xl,
+    paddingHorizontal: DesignSystem.spacing.xs,
+    marginVertical: DesignSystem.spacing.xs,
   },
   textInterest: {
-    color: Colors.white,
-    fontSize: 12,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontSize: DesignSystem.typography.sizes.sm,
+    fontFamily: DesignSystem.typography.fontFamily.primary,
   },
   containerBtns: {
     flexDirection: 'row',
-    marginTop: 1,
+    marginTop: DesignSystem.spacing.md,
+    backgroundColor: DesignSystem.colors.gray[900],
+    borderBottomLeftRadius: DesignSystem.borderRadius.xl,
+    borderBottomRightRadius: DesignSystem.borderRadius.xl,
+    overflow: 'hidden',
   },
   button: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 5,
-    margin: 1,
+    paddingVertical: DesignSystem.spacing.md,
+    paddingHorizontal: DesignSystem.spacing.md,
+  },
+  ignoreButton: {
+    backgroundColor: DesignSystem.colors.danger,
+  },
+  acceptButton: {
+    backgroundColor: DesignSystem.colors.success,
   },
   textIgnore: {
-    fontSize: 13,
-    fontFamily: Fonts.PromptRegular,
+    ...DesignSystem.typography.styles.button,
+    color: DesignSystem.colors.white,
   },
   textAccept: {
-    fontSize: 13,
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    ...DesignSystem.typography.styles.button,
+    color: DesignSystem.colors.white,
   },
 });
 
@@ -210,31 +217,39 @@ const RequestsListItem = ({ name, item, imageUrl, age, interests, onProfileUpdat
 
   const onAcceptPress = () => {
 
+    // Guard check: ensure profile exists
+    if (!getprofile?.profile?.profileId) {
+      console.warn('Profile data not available');
+      Alert.alert('Error', 'Your profile data is not loaded. Please try again.');
+      return;
+    }
 
+    console.log('✅ Accepting Klatchup request from:', item.name);
+    
     let friendArr = addUserIdToResponseLoginUser(temp_friend, item.profileId);
     let friendreqArr = removeUserIdsInResponse(temp_friendRequest, item.profileId)
 
     const profile = {
-      name: getprofile.profile.name,
-      mobile: getprofile.profile.mobile,
-      birthDate: getprofile.profile.birthDate,
-      gender: getprofile.profile.gender,
+      name: getprofile.profile.name || '',
+      mobile: getprofile.profile.mobile || '',
+      birthDate: getprofile.profile.birthDate || '',
+      gender: getprofile.profile.gender || '',
       interests: parsedInterests,
-      city: getprofile.profile.city,
-      bio: getprofile.profile.bio,
-      profilePicture: getprofile.profile.profilePicture,
+      city: getprofile.profile.city || '',
+      bio: getprofile.profile.bio || '',
+      profilePicture: getprofile.profile.profilePicture || '',
       showPictures: typeof getprofile.profile.showPictures === 'string'
         ? JSON.parse(getprofile.profile.showPictures || '[]')
-        : getprofile.profile.showPictures,
-      work: getprofile.profile.work,
-      education: getprofile.profile.education,
+        : getprofile.profile.showPictures || [],
+      work: getprofile.profile.work || '',
+      education: getprofile.profile.education || '',
       friendRequest: friendreqArr,
       friends: friendArr,
-      lookingFor: getprofile.profile.lookingFor,
+      lookingFor: getprofile.profile.lookingFor || '',
       //currentLocation: JSON.parse(getprofile.profile.currentLocation),
       currentLocation: typeof getprofile.profile.currentLocation === 'string'
         ? JSON.parse(getprofile.profile.currentLocation || '[]')
-        : getprofile.profile.currentLocation,
+        : getprofile.profile.currentLocation || { placeName: '', lat: '0', long: '0' },
       isActive: true,
       isDeleted: false,
       updatedAt: true
@@ -243,35 +258,46 @@ const RequestsListItem = ({ name, item, imageUrl, age, interests, onProfileUpdat
     const profileId = getprofile.profile.profileId;
     dispatch(updateProfileRequest({ profile, profileId }));
     setAccpetPressed(true);
+    
+    Alert.alert('✅ Connected!', `You're now connected with ${item.name}`);
   }
 
   const onIgnorePress = () => {
 
+    // Guard check: ensure profile exists
+    if (!getprofile?.profile?.profileId) {
+      console.warn('Profile data not available');
+      Alert.alert('Error', 'Your profile data is not loaded. Please try again.');
+      return;
+    }
+
+    console.log('❌ Ignoring Klatchup request from:', item.name);
+    
     let friendreqArr = removeUserIdsInResponse(temp_friendRequest, item.profileId)
 
     const profile = {
-      name: getprofile.profile.name,
-      mobile: getprofile.profile.mobile,
-      birthDate: getprofile.profile.birthDate, //"1990-01-01",
-      gender: getprofile.profile.gender,
+      name: getprofile.profile.name || '',
+      mobile: getprofile.profile.mobile || '',
+      birthDate: getprofile.profile.birthDate || '', //"1990-01-01",
+      gender: getprofile.profile.gender || '',
       interests: parsedInterests,
-      city: getprofile.profile.city,
-      bio: getprofile.profile.bio,
-      profilePicture: getprofile.profile.profilePicture,
+      city: getprofile.profile.city || '',
+      bio: getprofile.profile.bio || '',
+      profilePicture: getprofile.profile.profilePicture || '',
       showPictures: typeof getprofile.profile.showPictures === 'string'
         ? JSON.parse(getprofile.profile.showPictures || '[]')
-        : getprofile.profile.showPictures,
-      work: getprofile.profile.work,
-      education: getprofile.profile.education,
+        : getprofile.profile.showPictures || [],
+      work: getprofile.profile.work || '',
+      education: getprofile.profile.education || '',
       friendRequest: friendreqArr,
       //friends: JSON.parse(getprofile.profile.friends),
       friends: typeof getprofile.profile.friends === 'string'
         ? JSON.parse(getprofile.profile.friends || '[]')
-        : getprofile.profile.friends,
-      lookingFor: getprofile.profile.lookingFor,
+        : getprofile.profile.friends || { user_ids: [] },
+      lookingFor: getprofile.profile.lookingFor || '',
       currentLocation: typeof getprofile.profile.currentLocation === 'string'
         ? JSON.parse(getprofile.profile.currentLocation || '[]')
-        : getprofile.profile.currentLocation,
+        : getprofile.profile.currentLocation || { placeName: '', lat: '0', long: '0' },
       isActive: true,
       isDeleted: false,
       updatedAt: true
@@ -280,6 +306,8 @@ const RequestsListItem = ({ name, item, imageUrl, age, interests, onProfileUpdat
     const profileId = getprofile.profile.profileId;
     dispatch(updateFreindProfileRequest({ profile, profileId }));
     setAccpetPressed(false);
+    
+    Alert.alert('👋 Ignored', `You've ignored ${item.name}'s request`);
     onProfileUpdated();
   }
 
@@ -351,17 +379,20 @@ const RequestsListItem = ({ name, item, imageUrl, age, interests, onProfileUpdat
         <TouchableOpacity
           style={[
             styles.button,
-            { backgroundColor: '#300943', borderBottomLeftRadius: 20 },
-          ]}>
-          <GradientText
-            style={styles.textIgnore}
-            colors={['#F58C00', '#704002']}
-            underline onPress={() => onIgnorePress()}>
-            Ignore
-          </GradientText>
+            styles.ignoreButton,
+            { borderBottomLeftRadius: DesignSystem.borderRadius.xl, borderBottomRightRadius: 0 },
+          ]}
+          onPress={() => onIgnorePress()}>
+          <Text style={styles.textIgnore}>
+            👋 Ignore
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => onAcceptPress()}>
-          <Text style={styles.textAccept}>Accept</Text>
+        <TouchableOpacity 
+          style={[styles.button, styles.acceptButton, { borderBottomLeftRadius: 0, borderBottomRightRadius: DesignSystem.borderRadius.xl }]} 
+          onPress={() => onAcceptPress()}>
+          <Text style={styles.textAccept}>
+            🎯 Klatchup
+          </Text>
         </TouchableOpacity>
       </View>
     </GradientBorderView>

@@ -2,8 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
 import ToolbarIcon from './ToolbarIcon';
-import Colors from '../theme/Colors'
-import Fonts from '../theme/Fonts';
+import { DesignSystem } from '../theme/DesignSystem'
 
 const styles = StyleSheet.create({
   container: {
@@ -23,11 +22,11 @@ const styles = StyleSheet.create({
     width: 25,
   },
   textTitle: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     textAlign: 'center',
     flex: 1,
     fontSize: 18,
-    fontFamily: Fonts.UnboundedRegular,
+    fontWeight: '400',
   },
 });
 

@@ -1,17 +1,9 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import GradientBorderView from '../../components/GradientBorderView';
-import Colors from '../../theme/Colors';
-import Fonts from '../../theme/Fonts';
-import {Swipeable} from 'react-native-gesture-handler';
-import ToolbarIcon from '../../components/ToolbarIcon';
+import { DesignSystem } from '../../theme/DesignSystem';
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 20,
-    marginVertical: 5,
-    backgroundColor: '#CD0000',
-  },
   image: {
     height: 75,
     width: 75,
@@ -35,25 +27,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textName: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptMedium,
+    color: DesignSystem.colors.white,
+    fontWeight: '500',
     fontSize: 18,
     marginTop: 10,
   },
   textTime: {
     color: '#B5ACC2',
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 10,
     marginTop: 10,
   },
   textMsg: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 12,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
   },
   textUnread: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontWeight: '400',
     fontSize: 14,
   },
   containerUnread: {
@@ -63,13 +55,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  swipeLeftContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    aspectRatio: 1,
-    marginVertical: 5,
-    borderRadius: 20,
-  },
 });
 
 interface Props {
@@ -77,7 +62,6 @@ interface Props {
   name: string
   lastMessage: string
   onPress: () => void
-  onPressDelete: () => void
   unreadCount: number
   time: string
 }
@@ -89,20 +73,6 @@ const defaultProps: Props = {
   onPress: () => {},
   unreadCount: 0,
   time: '',
-  onPressDelete: () => {},
-}
-
-const RightActions = ({progress, dragX, onPress}) => {
-
-  return (
-    
-    <View style={styles.swipeLeftContainer}>
-      <ToolbarIcon
-        icon={require('../../assets/icons/ic_message_block.png')}
-        onPress={onPress}
-      />
-    </View>
-  )
 }
 
 const ChatListItem = ({
@@ -112,43 +82,38 @@ const ChatListItem = ({
   unreadCount,
   time,
   onPress,
-  onPressDelete,
 }: Props) => {
-  console.log(imageUrl)
+  const hasValidImage = typeof imageUrl === 'string' && imageUrl.trim().length > 0;
+
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.6}>
-      <Swipeable
-        containerStyle={styles.container}
-        overshootLeft={false}
-        overshootRight={false}
-        renderRightActions={(progress, dragX) => (
-          <RightActions
-            progress={progress}
-            dragX={dragX}
-            onPress={onPressDelete}
+      <GradientBorderView styles={styles.gradient}>
+        <View style={styles.item}>
+          <Image
+            source={
+              hasValidImage
+                ? { uri: imageUrl }
+                : require('../../assets/images/intro.png')
+            }
+            style={styles.image}
           />
-        )}>
-        <GradientBorderView styles={styles.gradient}>
-          <View style={styles.item}>
-            <Image source={{uri: imageUrl}} style={styles.image} />
-            <View style={styles.containerDetails}>
-              <View style={styles.row}>
-                <Text style={styles.textName}>{name}</Text>
-                <Text style={styles.textTime}>{time}</Text>
-              </View>
+          <View style={styles.containerDetails}>
+            <View style={styles.row}>
+              <Text style={styles.textName}>{name}</Text>
+              <Text style={styles.textTime}>{time}</Text>
+            </View>
 
-              <View style={styles.row}>
-                <Text style={styles.textMsg}>{lastMessage}</Text>
-                {unreadCount > 0 && (
-                  <View style={styles.containerUnread}>
-                    <Text style={styles.textUnread}>{unreadCount}</Text>
-                  </View>
-                )}
-              </View>
+            <View style={styles.row}>
+              <Text style={styles.textMsg}>{lastMessage}</Text>
+              {unreadCount > 0 && (
+                <View style={styles.containerUnread}>
+                  <Text style={styles.textUnread}>{unreadCount}</Text>
+                </View>
+              )}
             </View>
           </View>
-        </GradientBorderView>
-      </Swipeable>
+        </View>
+      </GradientBorderView>
     </TouchableOpacity>
   );
 };

@@ -1,9 +1,13 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import Fonts from '../../theme/Fonts';
-import Colors from '../../theme/Colors';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { DesignSystem } from '../../theme/DesignSystem';
 import GradientText from '../../components/GradientText';
 import GradientBorderView from '../../components/GradientBorderView'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { checkInAPI } from '../../services/checkinService';
+import { locationTrackingService } from '../../services/locationTrackingService';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,20 +23,20 @@ const styles = StyleSheet.create({
   },
   textName: {
     fontSize: 18,
-    fontFamily: Fonts.PromptMedium,
-    color: Colors.white,
+    fontWeight: '500',
+    color: DesignSystem.colors.white,
   },
   textAddress: {
     fontSize: 16,
-    fontFamily: Fonts.PromptRegular,
-    color: Colors.white,
+    fontWeight: '400',
+    color: DesignSystem.colors.white,
   },
   containerText: {
     flex: 3,
   },
   textGetIn: {
     fontSize: 18,
-    fontFamily: Fonts.PromptMedium,
+    fontWeight: '500',
   },
   containerGetIn: {
     justifyContent: 'center',
@@ -53,23 +57,88 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     zIndex: 1,
   },
+  checkInButton: {
+    backgroundColor: DesignSystem.colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  checkInButtonText: {
+    color: DesignSystem.colors.white,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  loadingButton: {
+    opacity: 0.6,
+  },
 });
 
 interface Props {
   name: string
   address: string
   onPress: () => void
+  onCheckIn?: (placeName: string, latitude: number, longitude: number) => void
   active: boolean
+  latitude?: number
+  longitude?: number
 }
 
 const defaultProps: Props = {
   name: '',
   address: '',
   onPress: () => { },
-  active: false
+  active: false,
+  latitude: 0,
+  longitude: 0,
 };
 
-const SocietyResultsListItem = ({ name, address, active, onPress }: Props) => {
+const SocietyResultsListItem = ({ name, address, active, onPress, onCheckIn, latitude = 0, longitude = 0 }: Props) => {
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
+  const token = useSelector((state: RootState) => state.sample.token);
+
+  const handleCheckIn = async () => {
+    if (!token) {
+      Alert.alert('Error', 'Authentication token not found');
+      return;
+    }
+
+    if (!latitude || !longitude) {
+      Alert.alert('Error', 'Location data not available');
+      return;
+    }
+
+    setIsCheckingIn(true);
+    try {
+      console.log(`🔵 Checking in at: ${name}`);
+      await checkInAPI(token, {
+        placeName: name,
+        latitude,
+        longitude
+      });
+
+      // Start location tracking for auto-checkout at 1km
+      await locationTrackingService.startTracking(token);
+
+      // Store check-in status
+      await AsyncStorage.setItem('isCheckedIn', 'true');
+      await AsyncStorage.setItem('checkedInPlace', name);
+      await AsyncStorage.setItem('checkedInLat', latitude.toString());
+      await AsyncStorage.setItem('checkedInLong', longitude.toString());
+
+      console.log(`✅ Checked in at: ${name}`);
+      Alert.alert('Success', `Checked in at ${name}\n\nLocation tracking active - Auto-checkout at 1km`);
+
+      // Callback to parent component
+      if (onCheckIn) {
+        onCheckIn(name, latitude, longitude);
+      }
+    } catch (error: any) {
+      console.error(`❌ Check-in failed:`, error);
+      Alert.alert('Error', error.message || 'Failed to check in');
+    } finally {
+      setIsCheckingIn(false);
+    }
+  };
 
   return (
     <GradientBorderView borderWidth={1} styles={styles.container}>
@@ -79,26 +148,38 @@ const SocietyResultsListItem = ({ name, address, active, onPress }: Props) => {
         style={styles.btn}>
         {/* Active label in top-right */}
         {active && <Text style={styles.activeLabel}>Active</Text>}
-        {/* <Text style={styles.activeLabel}>Active</Text> */}
+        
         <View style={styles.containerText}>
           <Text style={styles.textName}>{name}</Text>
           <Text style={styles.textAddress}>{address}</Text>
         </View>
 
         <View style={styles.containerGetIn}>
-          {!active &&
+          {!active ? (
+            <TouchableOpacity
+              style={[styles.checkInButton, isCheckingIn && styles.loadingButton]}
+              onPress={handleCheckIn}
+              disabled={isCheckingIn}
+            >
+              {isCheckingIn ? (
+                <ActivityIndicator size="small" color={DesignSystem.colors.white} />
+              ) : (
+                <Text style={styles.checkInButtonText}>Check In</Text>
+              )}
+            </TouchableOpacity>
+          ) : (
             <GradientText
               style={styles.textGetIn}
-              colors={['#F58C00', '#704002']}
+              colors={['#28a745', '#1a6d2f']}
               underline>
-              Get In
+              Checked In
             </GradientText>
-          }
+          )}
         </View>
       </TouchableOpacity>
     </GradientBorderView>
   );
-};
+};;
 
 SocietyResultsListItem.defaultProps = defaultProps
 

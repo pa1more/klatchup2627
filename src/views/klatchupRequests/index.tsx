@@ -4,7 +4,7 @@ import ScreenWrapper from '../../components/ScreenWrapper';
 import Toolbar from '../../components/Toolbar';
 import BottomBar from '../../components/BottomBar';
 import RequestsListItem from './RequestsListItem';
-import ListEmptyComponent from '../../components/ListEmptyComponent';
+import EmptyState from '../../components/EmptyState';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { getFriendProfileRequest } from '../../slices/profile';
@@ -93,11 +93,17 @@ const KlatchupRequestsScreen = () => {
 
   useEffect(() => {
     console.log("refresh")
-    dispatch(getFriendProfileRequest(getprofile.profile.profileId));
+    // Guard check: ensure profile exists
+    if (getprofile?.profile?.profileId) {
+      dispatch(getFriendProfileRequest(getprofile.profile.profileId));
+    }
   }, [refreshKey])
 
   useEffect(() => {
-    dispatch(getFriendProfileRequest(getprofile.profile.profileId));
+    // Guard check: ensure profile exists
+    if (getprofile?.profile?.profileId) {
+      dispatch(getFriendProfileRequest(getprofile.profile.profileId));
+    }
   }, [])
 
   return (
@@ -108,9 +114,12 @@ const KlatchupRequestsScreen = () => {
         <FlatList
           data={listData}
           ListEmptyComponent={() => (
-            <ListEmptyComponent
-              title="Oops.. The profile list is empty."
-              message="Go to find the friends around you like."
+            <EmptyState
+              icon="💌"
+              title="No Klatchup Requests"
+              subtitle="You haven't received any Klatchup requests yet. Go find people nearby!"
+              buttonText="Discover People"
+              onButtonPress={() => { /* Navigate to discovery */ }}
             />
           )}
           style={styles.containerMain}

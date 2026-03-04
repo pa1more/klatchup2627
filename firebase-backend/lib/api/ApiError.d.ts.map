@@ -1,0 +1,1 @@
+{"version":3,"file":"ApiError.d.ts","sourceRoot":"","sources":["../../src/api/ApiError.ts"],"names":[],"mappings":"AAAA,qBAAa,QAAS,SAAQ,KAAK;IAExB,UAAU,EAAE,MAAM;IAClB,IAAI,EAAE,MAAM;gBADZ,UAAU,GAAE,MAAY,EACxB,IAAI,GAAE,MAAgB,EAC7B,OAAO,GAAE,MAAgC;CAK5C;AAED,eAAO,MAAM,UAAU,GACrB,YAAY,MAAM,EAClB,MAAM,MAAM,EACZ,UAAS,MAAgB,UAG1B,CAAC"}

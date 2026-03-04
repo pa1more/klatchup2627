@@ -2,9 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import { useNavigation } from '@react-navigation/core';
-import Fonts from '../../theme/Fonts';
+import { DesignSystem } from '../../theme/DesignSystem';
 import GradientText from '../../components/GradientText';
-import Colors from '../../theme/Colors';
 import Button from '../../components/Button';
 
 const styles = StyleSheet.create({
@@ -19,7 +18,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   textKlatchup: {
-    fontFamily: Fonts.UnboundedMedium,
+    fontWeight: '600',
     fontSize: 24,
   },
   imageLogo: {
@@ -32,20 +31,20 @@ const styles = StyleSheet.create({
     height: '30%',
   },
   textHeading: {
-    color: Colors.white,
-    fontFamily: Fonts.UnboundedMedium,
+    color: DesignSystem.colors.white,
+    fontWeight: '600',
     fontSize: 24,
     textAlign: 'center',
     paddingHorizontal: 20,
   },
   textBysinging: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontWeight: '400',
     fontSize: 14,
   },
   textTerms: {
     fontSize: 14,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     textDecorationLine: 'underline',
   },
   iconNext: {

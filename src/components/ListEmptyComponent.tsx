@@ -1,7 +1,6 @@
 import React from 'react'
 import {StyleSheet, Text, View, Image, ImageSourcePropType} from 'react-native'
-import Fonts from '../theme/Fonts'
-import Colors from '../theme/Colors'
+import { DesignSystem } from '../theme/DesignSystem'
 
 const styles = StyleSheet.create({
   container: {
@@ -13,14 +12,14 @@ const styles = StyleSheet.create({
   },
   textTitle: {
     fontSize: 18,
-    fontFamily: Fonts.PromptMedium,
-    color: Colors.white,
+    fontWeight: '500',
+    color: DesignSystem.colors.white,
     textAlign: 'center',
   },
   textMessage: {
     fontSize: 16,
-    fontFamily: Fonts.PromptRegular,
-    color: Colors.white,
+    fontWeight: '400',
+    color: DesignSystem.colors.white,
     textAlign: 'center',
     marginTop: 10,
   },

@@ -1,13 +1,12 @@
 import { StyleProp, StyleSheet, Text, TextStyle } from 'react-native'
 import React from 'react'
-import Fonts from '../theme/Fonts'
-import Colors from '../theme/Colors'
+import { DesignSystem } from '../theme/DesignSystem'
 
 const styles = StyleSheet.create({
   textError: {
-    color: Colors.errorText,
+    color: DesignSystem.colors.danger,
     fontSize: 14,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
   },
 })
 

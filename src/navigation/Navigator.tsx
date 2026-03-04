@@ -21,6 +21,9 @@ import GiveFeedback from '../views/settings/GiveFeedback'
 import UserProfile from '../views/userprofile'
 import Chat from '../views/chat'
 import ChatMessages from '../views/chat/ChatMessages'
+import LocationChat from '../views/chat/LocationChat'
+import LocationChatMessages from '../views/chat/LocationChatMessages'
+import Notifications from '../views/notifications'
 import theme from '../theme/NavigationTheme'
 
 function Navigator() {
@@ -80,6 +83,22 @@ function Navigator() {
             animation: 'fade',
             animationDuration: 200,
           }}
+          name="Klatchup"
+          component={KlatchupRequests}
+        />
+        <Stack.Screen
+          options={{
+            animation: 'fade',
+            animationDuration: 200,
+          }}
+          name="Notifications"
+          component={Notifications}
+        />
+        <Stack.Screen
+          options={{
+            animation: 'fade',
+            animationDuration: 200,
+          }}
           name="Chat"
           component={Chat}
         />
@@ -91,6 +110,20 @@ function Navigator() {
         <Stack.Screen name="GiveFeedback" component={GiveFeedback} />
         <Stack.Screen name="UserProfile" component={UserProfile} />
         <Stack.Screen name="ChatMessages" component={ChatMessages} />
+        <Stack.Screen 
+          name="LocationChat" 
+          component={LocationChat}
+          options={{
+            animation: 'slide_from_right',
+          }}
+        />
+        <Stack.Screen 
+          name="LocationChatMessages" 
+          component={LocationChatMessages}
+          options={{
+            animation: 'slide_from_right',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )

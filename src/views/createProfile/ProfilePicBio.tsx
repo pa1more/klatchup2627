@@ -1,8 +1,7 @@
 
 import { Alert, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Fonts from '../../theme/Fonts'
-import Colors from '../../theme/Colors'
+import { DesignSystem } from '../../theme/DesignSystem'
 import Heading from '../../components/Heading'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
@@ -23,9 +22,9 @@ const styles = StyleSheet.create({
 
   container: {},
   textSubHeading: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     marginVertical: 10,
   },
   btnContinue: {
@@ -114,6 +113,11 @@ const ProfilePicBio = ({ onPressNext, formData = defaultFormData }: Props) => {
 
   const onPressContinue = () => {
 
+    if (bio.trim().length < 20) {
+      Alert.alert('Bio Required', 'Please write at least 20 characters about yourself to help others know you better.');
+      return;
+    }
+
     const formattedInterests = formData.interests.map((item) => ({
       name: item,
       subInterest: ''
@@ -137,7 +141,7 @@ const ProfilePicBio = ({ onPressNext, formData = defaultFormData }: Props) => {
       currentLocation: { placeName: "", lat: latitude.toString(), long: longitude.toString() },
       isActive: true,
       isDeleted: false,
-      updatedAt: true
+      updatedAt: new Date().toISOString()
     };
     console.log(profile)
     dispatch(insertProfileRequest({ profile }));
@@ -175,27 +179,15 @@ const ProfilePicBio = ({ onPressNext, formData = defaultFormData }: Props) => {
   useEffect(() => {
 
     if (profileInsertExecuted) {
-      //signInWithPhoneNumber(mobileNo)
+      console.log('Profile inserted successfully');
       dispatch(resetInsertProfileExecuted());
       navigation.replace('Home')
-      // Alert.alert("Profile Created Successfully, Please Re-login to app")
-      // navigation.replace('EnterMobileNo');
-      // Alert.alert(
-      //   "Profile Created Successfully",
-      //   "Please Re-login to app",
-      //   [
-      //     {
-      //       text: "OK",
-      //       onPress: () => navigation.replace('EnterMobileNo'),
-      //     },
-      //   ],
-      //   { cancelable: false }
-      // );
-    } else if (profile_error != null) {
-      Alert.alert('Error', profile_error);
+    } else if (profile_error != null && profile_error !== '') {
+      console.error('Profile insertion error:', profile_error);
+      Alert.alert('Error Creating Profile', profile_error);
       return;
     }
-  }, [profileInsertExecuted])
+  }, [profileInsertExecuted, profile_error])
 
   return (
 
@@ -226,7 +218,7 @@ const ProfilePicBio = ({ onPressNext, formData = defaultFormData }: Props) => {
         maxLength={250}
         style={{ height: 80 }}
       />
-      <ErrorText message="This is error message" />
+      {profile_error && <ErrorText message={profile_error} />}
       <Button
         title="Continue"
         style={styles.btnContinue}

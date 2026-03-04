@@ -3,8 +3,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native'
 import TextInput from '../../components/TextInput'
 import ErrorText from '../../components/ErrorText'
 import Heading from '../../components/Heading'
-import Fonts from '../../theme/Fonts'
-import Colors from '../../theme/Colors'
+import { DesignSystem } from '../../theme/DesignSystem'
 import Button from '../../components/Button'
 
 const styles = StyleSheet.create({
@@ -12,9 +11,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textSubHeading: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     marginVertical: 10,
   },
   containerBirthdate: {

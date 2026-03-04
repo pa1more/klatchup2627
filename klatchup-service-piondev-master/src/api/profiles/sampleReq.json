@@ -1,0 +1,38 @@
+{
+  "profile": {
+    "name": "Nikheel",
+    "mobile": "8108783750",
+    "birthDate": "26/12/1989",
+    "gender": "M",
+    "interests": [
+      {
+        "name": "Spots",
+        "subInterest": "cricket"
+      },
+      {
+        "name": "Spots",
+        "subInterest": "cricket"
+      }
+    ],
+    "city": "Pune",
+    "bio": "NA",
+    "profilePicture": "NA",
+    "showPictures": [
+      {
+        "priority": 1,
+        "path": "NA"
+      }
+    ],
+    "work": "Software Professional",
+    "education": "BE",
+    "lookingFor": "NA",
+    "currentLocation": {
+      "placeName": "Pune",
+      "lat": "string",
+      "long": "string"
+    },
+    "isActive": true,
+    "isDeleted": true,
+    "updatedAt": true
+  }
+}

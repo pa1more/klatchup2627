@@ -4,8 +4,7 @@ import ScreenWrapper from '../../components/ScreenWrapper'
 import Toolbar from '../../components/Toolbar'
 import ToolbarIcon from '../../components/ToolbarIcon'
 import ImagesCarousel from '../../components/ImagesCarousel'
-import Colors from '../../theme/Colors'
-import Fonts from '../../theme/Fonts'
+import { DesignSystem } from '../../theme/DesignSystem'
 import InterestExpandableItem from '../../components/InterestExpandableItem'
 
 const styles = StyleSheet.create({
@@ -13,17 +12,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   textBio: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 14,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: Colors.white,
+    borderColor: DesignSystem.colors.white,
     padding: 10,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
   },
   textSectionTitle: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptMedium,
+    color: DesignSystem.colors.white,
+    fontWeight: '500',
     fontSize: 22,
     marginVertical: 10,
   },
@@ -36,7 +35,20 @@ const styles = StyleSheet.create({
 const UserProfile = ({ route }: any) => {
 
   let item = route.params;
-  const parsedInterests = JSON.parse(item.item.interests);
+  
+  let parsedInterests: any[] = [];
+  try {
+    // Handle interests - could be string or array
+    const interests = item.item?.interests;
+    if (typeof interests === 'string') {
+      parsedInterests = JSON.parse(interests);
+    } else if (Array.isArray(interests)) {
+      parsedInterests = interests;
+    }
+  } catch (error) {
+    console.warn('Failed to parse interests:', error);
+    parsedInterests = [];
+  }
 
   return (
     <ScreenWrapper>
@@ -55,11 +67,14 @@ const UserProfile = ({ route }: any) => {
             images={
               (() => {
                 try {
-                  if (!item.item?.showPictures) return [];
-                  const parsed = JSON.parse(item.item.showPictures);
-                  return parsed
-                    .sort((a: { priority: number }, b: { priority: number }) => a.priority - b.priority)
-                    .map((img: any) => img.path);
+                  if (!item?.item?.showPictures) return [];
+                  const pictures = item.item.showPictures;
+                  const parsed = typeof pictures === 'string' ? JSON.parse(pictures) : pictures;
+                  return Array.isArray(parsed)
+                    ? parsed
+                        .sort((a: { priority: number }, b: { priority: number }) => a.priority - b.priority)
+                        .map((img: any) => img.path)
+                    : [];
                 } catch (error) {
                   console.warn('Invalid showPictures:', error);
                   return [];
@@ -70,24 +85,24 @@ const UserProfile = ({ route }: any) => {
           <View style={styles.containerMain}>
 
             <Text style={styles.textBio}>
-              {item.item.bio}
+              {item?.item?.bio || 'No bio'}
             </Text>
 
             <Text style={styles.textSectionTitle}>Interests</Text>
            
-            {parsedInterests.map((item: { name: string | undefined; subInterest: string | undefined }, index: React.Key | null | undefined) => (
+            {parsedInterests.length > 0 ? parsedInterests.map((interest: { name: string | undefined; subInterest: string | undefined }, index: React.Key | null | undefined) => (
               <InterestExpandableItem
                 key={index}
-                title={item.name}
-                description={item.subInterest}
+                title={interest.name}
+                description={interest.subInterest}
               />
-            ))}
+            )) : <Text style={styles.textBio}>No interests added</Text>}
 
             <Text style={styles.textSectionTitle}>Education</Text>
-            <Text style={styles.textBio}> {item.item.education}</Text>
+            <Text style={styles.textBio}> {item?.item?.education || 'Not specified'}</Text>
 
             <Text style={styles.textSectionTitle}>Work</Text>
-            <Text style={styles.textBio}> {item.item.work}</Text>
+            <Text style={styles.textBio}> {item?.item?.work || 'Not specified'}</Text>
           </View>
           <View style={{ paddingBottom: 200 }} />
         </ScrollView>

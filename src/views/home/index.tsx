@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native';
 import ScreenWrapper from '../../components/ScreenWrapper'
-import Colors from '../../theme/Colors'
-import Fonts from '../../theme/Fonts'
+import { DesignSystem } from '../../theme/DesignSystem'
+
 import DropShadow from 'react-native-drop-shadow';
 import BottomBar from '../../components/BottomBar'
 import HomeHelperModal from '../../components/HomeHelperModal'
@@ -51,9 +51,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   textName: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 24,
-    fontFamily: Fonts.UnboundedMedium,
+    fontWeight: '600',
     marginTop: 10,
   },
 });

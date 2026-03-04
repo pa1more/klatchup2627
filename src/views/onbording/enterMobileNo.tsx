@@ -137,8 +137,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ScreenWrapper from '../../components/ScreenWrapper';
-import Fonts from '../../theme/Fonts';
-import Colors from '../../theme/Colors';
+import { DesignSystem } from '../../theme/DesignSystem';
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import CountrySelectModal from '../../components/CountrySelectModal';
@@ -226,14 +225,14 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   textHeading: {
-    fontFamily: Fonts.UnboundedMedium,
+    fontWeight: '600',
     fontSize: 24,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
   },
   textSubHeading: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     marginVertical: 10,
   },
   containerInputs: {
@@ -251,7 +250,7 @@ const styles = StyleSheet.create({
   },
   textCountryCode: {
     fontSize: 16,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
   },
   mobileInput: {
     flex: 1,

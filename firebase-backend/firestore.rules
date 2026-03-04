@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the resource
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Profiles collection
+    match /profiles/{profileId} {
+      // Anyone authenticated can read profiles
+      allow read: if isAuthenticated();
+      
+      // Users can only create/update their own profile
+      allow create: if isAuthenticated() && request.auth.uid == profileId;
+      allow update: if isOwner(profileId);
+      
+      // Only owner can delete their profile
+      allow delete: if isOwner(profileId);
+    }
+    
+    // Check-ins collection
+    match /checkins/{checkinId} {
+      // Anyone authenticated can read check-ins
+      allow read: if isAuthenticated();
+      
+      // Users can create check-ins
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // Users can only update/delete their own check-ins
+      allow update, delete: if isAuthenticated() && 
+                               resource.data.userId == request.auth.uid;
+    }
+    
+    // Locations collection
+    match /locations/{locationId} {
+      // Anyone authenticated can read locations
+      allow read: if isAuthenticated();
+      
+      // Any authenticated user can add locations
+      allow create: if isAuthenticated();
+      
+      // Only allow updates/deletes by authenticated users
+      // (You might want to restrict this further based on your needs)
+      allow update, delete: if isAuthenticated();
+    }
+    
+    // User settings/preferences (optional)
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId);
+    }
+    
+    // Notifications collection (optional)
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow delete: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

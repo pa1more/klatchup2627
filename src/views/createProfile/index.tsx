@@ -4,8 +4,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native'
 import ScreenWrapper from '../../components/ScreenWrapper'
-import Fonts from '../../theme/Fonts'
-import Colors from '../../theme/Colors'
+import { DesignSystem } from '../../theme/DesignSystem'
 import { useNavigation } from '@react-navigation/native'
 import NameBirthdate from './NameBirthdate'
 import GenderCity from './GenderCity'
@@ -19,14 +18,14 @@ const styles = StyleSheet.create({
     height: '90%',
   },
   textHeading: {
-    fontFamily: Fonts.UnboundedMedium,
+    fontWeight: '600',
     fontSize: 24,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
   },
   textSubHeading: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     marginVertical: 10,
   },
   progressBar: {

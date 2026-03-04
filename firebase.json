@@ -1,0 +1,48 @@
+{
+  "projects": {
+    "default": "klatchup-pavan2"
+  },
+  "targets": {
+    "klatchup-pavan2": {
+      "functions": [
+        {
+          "source": "firebase-backend",
+          "codebase": "default",
+          "ignore": [
+            "node_modules",
+            ".git",
+            "firebase-debug.log",
+            "firebase-functions-log.log"
+          ]
+        }
+      ]
+    }
+  },
+  "firestore": {
+    "rules": "firebase-backend/firestore.rules",
+    "indexes": "firebase-backend/firestore.indexes.json"
+  },
+  "database": {
+    "rules": "firebase-backend/database.rules.json"
+  },
+  "storage": {
+    "rules": "firebase-backend/storage.rules"
+  },
+  "functions": [
+    {
+      "source": "firebase-backend",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-functions-log.log",
+        ".env",
+        "*.md"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ]
+}

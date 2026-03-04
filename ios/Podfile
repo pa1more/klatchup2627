@@ -9,7 +9,7 @@ require Pod::Executable.execute_command('node', ['-p',
   )', __dir__]).strip
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, min_ios_version_supported
+platform :ios, '15.1'
 prepare_react_native_project!
 
 use_frameworks! :linkage => :dynamic   # do NOT use use_modular_headers! anywhere
@@ -22,8 +22,28 @@ target 'klatchup' do
   )
   post_install do |installer|
     react_native_post_install(installer, config[:reactNativePath], :mac_catalyst_enabled => false)
+    
+    # Disable non-modular include warnings globally to work around Xcode 16+ strictness
     installer.pods_project.targets.each do |t|
-      t.build_configurations.each { |bc| bc.build_settings['CLANG_ENABLE_MODULES'] = 'YES' }
+      t.build_configurations.each do |bc|
+        # Set deployment target
+        bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+        
+        # Override the default Xcode 16 compiler flags for modular includes
+        # We need to completely replace the existing flags with our version
+        current_cflags = bc.build_settings['OTHER_CFLAGS'] || ''
+        # Remove -Werror=non-modular-include-in-framework-module if present
+        current_cflags = current_cflags.gsub('-Werror=non-modular-include-in-framework-module', '-Wno-error=non-modular-include-in-framework-module').strip
+        bc.build_settings['OTHER_CFLAGS'] = "#{current_cflags} -Wno-error=non-modular-include-in-framework-module -Wno-error=return-type"
+        
+        current_cxxflags = bc.build_settings['OTHER_CPLUSPLUSFLAGS'] || ''
+        current_cxxflags = current_cxxflags.gsub('-Werror=non-modular-include-in-framework-module', '-Wno-error=non-modular-include-in-framework-module').strip
+        bc.build_settings['OTHER_CPLUSPLUSFLAGS'] = "#{current_cxxflags} -Wno-error=non-modular-include-in-framework-module -Wno-error=return-type"
+        
+        # Attempt to override modular framework setting
+        bc.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+        bc.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+      end
     end
   end
 end

@@ -133,6 +133,46 @@ export const profileSlice = createSlice({
 
         setAuthToken: (state, action: PayloadAction<string>) => {
             state.token = action.payload;
+            console.log('✅ Auth token set (will persist to AsyncStorage via saga)');
+        },
+
+        restoreTokenSuccess: (state, action: PayloadAction<string>) => {
+            state.token = action.payload;
+            console.log('✅ Auth token restored from AsyncStorage');
+        },
+
+        restoreTokenFailure: (state) => {
+            state.token = null;
+            console.log('⚠️ No saved token found - new session');
+        },
+
+        clearAuthSession: (state) => {
+            state.token = null;
+            state.mobileCheck = [];
+            state.profile = {
+                name: "",
+                mobile: "",
+                birthDate: "",
+                gender: "",
+                interests: [],
+                city: "",
+                bio: "",
+                profilePicture: "",
+                showPictures: [],
+                work: "",
+                education: "",
+                lookingFor: "",
+                currentLocation: { placeName: "", lat: "", long: "" },
+                isActive: true,
+                isDeleted: false,
+                updatedAt: true,
+            };
+            console.log('🚪 Auth session cleared');
+        },
+
+        restoreSessionRequest: (state) => {
+            // Trigger by saga to restore session
+            console.log('🔄 Starting session restoration...');
         },
 
         // 🔹 New action for inserting profile
@@ -318,6 +358,10 @@ export const {
     getProfileSuccess,
     getProfileFailure,
     setAuthToken,
+    restoreTokenSuccess,
+    restoreTokenFailure,
+    restoreSessionRequest,
+    clearAuthSession,
     insertProfileRequest, // Export new actions
     insertProfileSuccess,
     insertProfileFailure,

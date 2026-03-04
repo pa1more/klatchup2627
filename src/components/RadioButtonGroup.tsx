@@ -1,6 +1,5 @@
 import React from 'react'
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
-import Fonts from '../theme/Fonts'
 import LinearGradient from 'react-native-linear-gradient';
 
 const styles = StyleSheet.create({
@@ -15,7 +14,7 @@ const styles = StyleSheet.create({
   },
   textOptionName: {
     color: '#4D1469',
-    fontFamily: Fonts.PromptMedium,
+    fontWeight: '500',
     fontSize: 14,
   },
   dot: {

@@ -2,24 +2,23 @@ import {ScrollView, StyleSheet, Text} from 'react-native';
 import React from 'react';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Toolbar from '../../components/Toolbar';
-import Colors from '../../theme/Colors';
-import Fonts from '../../theme/Fonts';
+import { DesignSystem } from '../../theme/DesignSystem';
 
 const styles = StyleSheet.create({
   container: {
     padding: 15,
   },
   textSubheading: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 15,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     textAlign: 'justify',
     marginBottom: 10,
   },
   textContent: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 13,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     textAlign: 'justify',
   },
 });

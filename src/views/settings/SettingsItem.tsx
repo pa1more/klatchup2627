@@ -6,8 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import Colors from '../../theme/Colors';
-import Fonts from '../../theme/Fonts';
+import { DesignSystem } from '../../theme/DesignSystem';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,8 +18,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   textTitle: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptMedium,
+    color: DesignSystem.colors.white,
+    fontWeight: '500',
     fontSize: 16,
     marginLeft: 10,
   },

@@ -6,8 +6,7 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import Colors from '../../theme/Colors'
-import Fonts from '../../theme/Fonts'
+import { DesignSystem } from '../../theme/DesignSystem'
 
 const { width } = Dimensions.get('window')
 const maxWidth = width * 0.7
@@ -32,26 +31,26 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   textSelfMsg: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 14,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
   },
   textReceivedMsg: {
-    color: Colors.black,
+    color: DesignSystem.colors.black,
     fontSize: 14,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
   },
   textSentTime: {
     color: '#B5ACC2',
     fontSize: 10,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     marginHorizontal: 15,
     textAlign: 'right',
   },
   textReceivedTime: {
     color: '#B5ACC2',
     fontSize: 10,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     marginHorizontal: 15,
     textAlign: 'left',
   },

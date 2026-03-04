@@ -8,8 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import Colors from '../theme/Colors';
-import Fonts from '../theme/Fonts';
+import { DesignSystem } from '../theme/DesignSystem';
 import LinearGradient from 'react-native-linear-gradient';
 
 const { width } = Dimensions.get('window');
@@ -43,8 +42,8 @@ const styles = StyleSheet.create({
   textAge: {
     marginBottom: 10,
     fontSize: 20,
-    color: Colors.white,
-    fontFamily: Fonts.PromptMedium,
+    color: DesignSystem.colors.white,
+    fontWeight: '500',
     position: 'absolute',
     bottom: 20,
   },

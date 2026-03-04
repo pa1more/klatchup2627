@@ -1,13 +1,12 @@
 import React from 'react';
 import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native';
-import Fonts from '../theme/Fonts';
-import Colors from '../theme/Colors';
+import { DesignSystem } from '../theme/DesignSystem';
 
 const styles = StyleSheet.create({
   text: {
-    fontFamily: Fonts.UnboundedMedium,
+    fontWeight: '600',
     fontSize: 24,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
   },
 })
 

@@ -6,15 +6,16 @@ import {
   View,
   SafeAreaView,
   Platform,
+  Text,
 } from 'react-native'
-import RadialGradient from 'react-native-radial-gradient'
-import Colors from '../theme/Colors'
+import { DesignSystem } from '../theme/DesignSystem'
 
 const {width, height} = Dimensions.get('window')
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: DesignSystem.colors.background,
   },
 })
 
@@ -27,21 +28,27 @@ const defaultProps: Props = {
 }
 
 const ScreenWrapper = (props: Props) => {
-  return (
-    <RadialGradient
-      style={styles.container}
-      colors={[Colors.gradientBg1, Colors.gradientBg2]}
-      stops={[0, 1]}
-      center={[width / 2, height / 2]}
-      radius={height / 2}>
-      <StatusBar
-        backgroundColor={Colors.gradientBg2}
-        barStyle="light-content"
-        translucent={Platform.OS === 'ios'}
-      />
-      <SafeAreaView style={{flex: 1}}>{props.children}</SafeAreaView>
-    </RadialGradient>
-  )
+  try {
+    return (
+      <View style={styles.container}>
+        {Platform.OS === 'ios' && (
+          <StatusBar
+            backgroundColor={DesignSystem.colors.background}
+            barStyle="light-content"
+            translucent={false}
+          />
+        )}
+        <SafeAreaView style={{flex: 1}}>{props.children}</SafeAreaView>
+      </View>
+    )
+  } catch (error) {
+    console.error('ScreenWrapper error:', error);
+    return (
+      <View style={{flex: 1, backgroundColor: '#000'}}>
+        <Text>Error rendering screen</Text>
+      </View>
+    );
+  }
 }
 
 ScreenWrapper.defaultProps = defaultProps

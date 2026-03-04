@@ -5,7 +5,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  self.moduleName = @"klatchup"; // must match your JS app name
+  self.moduleName = @"klatchup";
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 

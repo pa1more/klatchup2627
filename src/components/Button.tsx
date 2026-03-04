@@ -11,8 +11,7 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
-import Colors from '../theme/Colors'
-import Fonts from '../theme/Fonts'
+import { DesignSystem } from '../theme/DesignSystem'
 
 const styles = StyleSheet.create({
   container: {
@@ -33,9 +32,9 @@ const styles = StyleSheet.create({
     alignSelf: 'baseline',
   },
   text: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 16,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     textAlign: 'center',
   },
   icon: {

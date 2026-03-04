@@ -2,7 +2,7 @@ import * as React from 'react';
 import Svg, {Path, Defs, LinearGradient, Stop, SvgProps} from 'react-native-svg';
 
 const KlatchUpLogo = (props: SvgProps) => (
-  <Svg xmlns="http://www.w3.org/2000/svg" fill="none" {...props}>
+  <Svg fill="none" {...props}>
     <Path fill="url(#a)" d="M9 23.672v51.6l20.232-19.32L29.168 5 9 23.672Z" />
     <Path
       fill="url(#b)"

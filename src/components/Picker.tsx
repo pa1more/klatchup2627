@@ -7,8 +7,7 @@ import {
   FlatList,
   Image,
 } from 'react-native'
-import Fonts from '../theme/Fonts'
-import Colors from '../theme/Colors'
+import { DesignSystem } from '../theme/DesignSystem'
 
 const styles = StyleSheet.create({
   containerHeader: {
@@ -32,12 +31,12 @@ const styles = StyleSheet.create({
   },
   textHeader: {
     color: '#4D1469',
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
   },
   textHeaderExpanded: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontWeight: '400',
     fontSize: 14,
   },
   containerOption: {
@@ -46,7 +45,7 @@ const styles = StyleSheet.create({
   },
   textOption: {
     color: '#4D1469',
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
   },
   listOptions: {
@@ -164,15 +163,15 @@ const Picker = ({
             <View style={styles.containerScrollIndicator}>
               <View
                 style={{
-                  position: 'absolute',
+                  position: 'absolute' as any,
                   right: -2,
                   zIndex: 100,
-                  top: `${Number(scrollPercente || 0).toFixed(0)}%`,
-                  height: `${scrollElementHeightPercent}%`,
+                  top: `${Number(scrollPercente || 0).toFixed(0)}%` as any,
+                  height: `${scrollElementHeightPercent}%` as any,
                   backgroundColor: '#4D1469',
                   width: 8,
                   borderRadius: 20,
-                }}
+                } as any}
               />
             </View>
           )}

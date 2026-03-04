@@ -11,7 +11,7 @@ import {
   TextInput,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import Colors from '../theme/Colors';
+import { DesignSystem } from '../theme/DesignSystem';
 import CountryCodes from '../utils/CountryCodes';
 
 const {width, height} = Dimensions.get('window');
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
   },
 });
 
-class CountrySelectModal extends Component {
-  constructor(props) {
+class CountrySelectModal extends Component<any, any> {
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -97,12 +97,12 @@ class CountrySelectModal extends Component {
     this.listData = CountryCodes;
   }
 
-  onPress = item => {
+  onPress = (item: any) => {
     this.props.onSelected(item);
     this.props.hideModal();
   };
 
-  onChangeText = text => {
+  onChangeText = (text: any) => {
     this.setState({query: text});
     if (text.length > 0) {
       const filteredList = this.listData.filter(
@@ -155,7 +155,7 @@ class CountrySelectModal extends Component {
               renderItem={({item}) => (
                 <TouchableHighlight
                   key={item.dialingCode}
-                  underlayColor={Colors.gradientBg1}
+                  underlayColor={DesignSystem.colors.primary}
                   onPress={() => this.onPress(item)}>
                   <View style={styles.containerItem}>
                     <Text style={styles.textFlag}>{item.emoji}</Text>

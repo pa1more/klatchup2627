@@ -1,25 +1,24 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Toolbar from '../../components/Toolbar';
-import Fonts from '../../theme/Fonts';
 import TextInput from '../../components/TextInput';
 import Button from '../../components/Button';
-import Colors from '../../theme/Colors';
+import { DesignSystem } from '../../theme/DesignSystem';
 
 const styles = StyleSheet.create({
   container: {
     padding: 15,
   },
   textTitle: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 24,
-    fontFamily: Fonts.UnboundedMedium,
+    fontWeight: '600',
   },
   textsub: {
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     fontSize: 14,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     marginBottom: 20,
   },
   input: {
@@ -36,7 +35,18 @@ const styles = StyleSheet.create({
 });
 
 const GiveFeedback = () => {
-  const [feedback, setFeedback] = useState('')
+  const [feedback, setFeedback] = useState('');
+
+  const onPressSendFeedback = () => {
+    if (feedback.trim().length < 10) {
+      Alert.alert('Feedback Too Short', 'Please write at least 10 characters to help us understand your feedback.');
+      return;
+    }
+    // TODO: Add API call to send feedback
+    Alert.alert('Thank You!', 'Your feedback has been submitted successfully.');
+    setFeedback('');
+  };
+
   return (
     <ScreenWrapper>
       <Toolbar title="" />
@@ -54,7 +64,7 @@ const GiveFeedback = () => {
           style={styles.input}
           multiline
         />
-        <Button style={styles.btn} title="Send Feedback" />
+        <Button style={styles.btn} title="Send Feedback" onPress={onPressSendFeedback} />
       </View>
     </ScreenWrapper>
   );

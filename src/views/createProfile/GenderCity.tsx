@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import Heading from '../../components/Heading';
-import Fonts from '../../theme/Fonts';
-import Colors from '../../theme/Colors';
+import { DesignSystem } from '../../theme/DesignSystem';
 import Button from '../../components/Button';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Picker from '../../components/Picker';
@@ -12,9 +11,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textSubHeading: {
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     fontSize: 14,
-    color: Colors.white,
+    color: DesignSystem.colors.white,
     marginVertical: 10,
   },
   iconNext: {

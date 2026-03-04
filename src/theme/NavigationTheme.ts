@@ -1,13 +1,13 @@
 import {DefaultTheme} from '@react-navigation/native';
-import Colors from './Colors';
+import { DesignSystem } from './DesignSystem';
 
 const theme = {
   ...DefaultTheme,
   dark: true,
   colors: {
-    ...DefaultTheme,
-    primary: Colors.gradientBg1,
-    background: Colors.gradientBg2,
+    ...DefaultTheme.colors,
+    primary: DesignSystem.colors.primary,
+    background: DesignSystem.colors.background,
   },
 };
 

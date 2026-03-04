@@ -1,0 +1,16 @@
+// Build configuration for klatchup iOS project
+// Suppress Xcode 16+ strict warning-to-error conversion for third-party pods
+
+// Suppress non-modular include warnings that are causing VerifyModule failures
+OTHER_CFLAGS = $(inherited) -Wno-error=non-modular-include-in-framework-module
+OTHER_CPLUSPLUSFLAGS = $(inherited) -Wno-error=non-modular-include-in-framework-module
+
+// Also prevent Werror from being applied to these warnings at all
+GCC_TREAT_WARNINGS_AS_ERRORS = NO
+SWIFT_TREAT_WARNINGS_AS_ERRORS = NO
+
+// Deployment target consistency
+IPHONEOS_DEPLOYMENT_TARGET = 15.1
+
+// Enable modular headers for better compatibility
+CLANG_ENABLE_MODULES = YES

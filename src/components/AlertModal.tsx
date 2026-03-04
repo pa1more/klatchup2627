@@ -1,7 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import Colors from '../theme/Colors'
-import Fonts from '../theme/Fonts'
+import { DesignSystem } from '../theme/DesignSystem'
 import Modal from 'react-native-modal';
 import GradientText from './GradientText'
 import LinearGradient from 'react-native-linear-gradient'
@@ -17,15 +16,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   textTitle: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptMedium,
+    color: DesignSystem.colors.white,
+    fontWeight: '500',
     fontSize: 16,
     textAlign: 'center',
     padding: 10,
   },
   textSubTitle: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontWeight: '400',
     fontSize: 14,
     textAlign: 'center',
     marginVertical: 20,
@@ -51,12 +50,12 @@ const styles = StyleSheet.create({
   },
   textBtnLeft: {
     fontSize: 15,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
   },
   textAccept: {
     fontSize: 15,
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontWeight: '400',
   },
 })
 

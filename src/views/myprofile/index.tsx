@@ -6,6 +6,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  Alert,
 } from 'react-native'
 import ScreenWrapper from '../../components/ScreenWrapper'
 import Toolbar from '../../components/Toolbar'
@@ -14,8 +15,7 @@ import RequestsListItem from '../../views/klatchupRequests/index'
 import { useNavigation } from '@react-navigation/native'
 import ToolbarIcon from '../../components/ToolbarIcon'
 import ProfileIcon from '../../components/ProfileIcon'
-import Colors from '../../theme/Colors'
-import Fonts from '../../theme/Fonts'
+import { DesignSystem } from '../../theme/DesignSystem'
 import TextInput from '../../components/TextInput'
 import AddPhoto from '../../components/AddPhoto'
 import InterestExpandableItem from '../../components/InterestExpandableItem'
@@ -37,20 +37,20 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   textNameAge: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptMedium,
+    color: DesignSystem.colors.white,
+    fontWeight: '500',
     textAlign: 'center',
     fontSize: 24,
   },
   textSectionTitle: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptMedium,
+    color: DesignSystem.colors.white,
+    fontWeight: '500',
     fontSize: 22,
   },
   inputBio: {
     backgroundColor: 'transparent',
     color: 'white',
-    borderColor: Colors.white,
+    borderColor: DesignSystem.colors.white,
     borderWidth: 1,
     marginVertical: 10,
     height: 140,
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: 'transparent',
     color: 'white',
-    borderColor: Colors.white,
+    borderColor: DesignSystem.colors.white,
     borderWidth: 1,
     marginVertical: 10,
     fontSize: 14,
@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
   },
   textEdit: {
     color: 'white',
-    borderColor: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    borderColor: DesignSystem.colors.white,
+    fontWeight: '400',
     fontSize: 13,
     textDecorationLine: 'underline',
     padding: 5,
@@ -96,7 +96,8 @@ const MyProfileScreen = () => {
 
   const getprofile: any = useSelector((state: RootState) => state.profile.mobileCheck);
 
-  console.log(getprofile.profile.showPictures)
+  // Safe logging with optional chaining
+  console.log('showPictures:', getprofile?.profile?.showPictures)
 
   const is_Loading = useSelector((state: RootState) => state.profile.isLoading);
 
@@ -109,20 +110,20 @@ const MyProfileScreen = () => {
 
 
 
-  const [name, setName] = useState(getprofile.profile.name);
+  const [name, setName] = useState(getprofile?.profile?.name || '');
   const [bio, setBio] = useState(
-    getprofile.profile.bio
+    getprofile?.profile?.bio || ''
   );
 
-  const [education, setEducation] = useState(getprofile.profile.education);
-  const [work, setWork] = useState(getprofile.profile.work);
-  const [selectedGender, setSelectedGender] = useState(getprofile.profile.gender);
-  const [selectedLookingFor, setSelectedLookingFor] = useState(getprofile.profile.lookingFor
+  const [education, setEducation] = useState(getprofile?.profile?.education || '');
+  const [work, setWork] = useState(getprofile?.profile?.work || '');
+  const [selectedGender, setSelectedGender] = useState(getprofile?.profile?.gender || '');
+  const [selectedLookingFor, setSelectedLookingFor] = useState(getprofile?.profile?.lookingFor || ''
   );
 
   const [showImagePicker, setShowImagePicker] = useState(false);
-  const [profilePic, setProfilePic] = useState(getprofile.profile.profilePicture);
-  const [userMobile, setUserMobile] = useState(getprofile.profile.mobile)
+  const [profilePic, setProfilePic] = useState(getprofile?.profile?.profilePicture || '');
+  const [userMobile, setUserMobile] = useState(getprofile?.profile?.mobile || '')
   const [image1, setImage1] = useState('');
   const [image2, setImage2] = useState('');
   const [image3, setImage3] = useState('');
@@ -170,10 +171,14 @@ const MyProfileScreen = () => {
     return age;
   };
 
-  const [age, setAge] = useState(calculateYearsFromDate(getprofile.profile.birthDate).toString())
+  const [age, setAge] = useState(() => 
+    getprofile?.profile?.birthDate 
+      ? calculateYearsFromDate(getprofile.profile.birthDate).toString()
+      : '0'
+  )
 
 
-  const onPressSettings = () => navigation.navigate('Settings')
+  const onPressSettings = () => (navigation as any).navigate('Settings')
 
   const selectImage = () => {
     setTimeout(() => {
@@ -230,15 +235,21 @@ const MyProfileScreen = () => {
 
   const onPressContinue = () => {
 
+    // Guard check: ensure getprofile and profile data exist
+    if (!getprofile?.profile?.profileId) {
+      Alert.alert('Error', 'Profile data not loaded. Please try again.');
+      return;
+    }
+
     const imageData = getSelectedImages(image1, image2, image3);
 
     const profile = {
-      name: getprofile.profile.name,
-      mobile: getprofile.profile.mobile,
-      birthDate: getprofile.profile.birthDate, //"1990-01-01",
+      name: getprofile.profile.name || '',
+      mobile: getprofile.profile.mobile || '',
+      birthDate: getprofile.profile.birthDate || '', //"1990-01-01",
       gender: selectedGender,
       interests: parsedInterests,
-      city: getprofile.profile.city,
+      city: getprofile.profile.city || '',
       bio: bio,
       profilePicture: profilePic,
       showPictures: imageData,
@@ -246,14 +257,14 @@ const MyProfileScreen = () => {
       education: education,
       friendRequest: typeof getprofile.profile.friendRequest === 'string'
         ? JSON.parse(getprofile.profile.friendRequest || '[]')
-        : getprofile.profile.friendRequest,
+        : getprofile.profile.friendRequest || { user_ids: [] },
       friends: typeof getprofile.profile.friends === 'string'
         ? JSON.parse(getprofile.profile.friends || '[]')
-        : getprofile.profile.friends,
+        : getprofile.profile.friends || { user_ids: [] },
       lookingFor: selectedLookingFor,
       currentLocation: typeof getprofile.profile.currentLocation === 'string'
         ? JSON.parse(getprofile.profile.currentLocation || '[]')
-        : getprofile.profile.currentLocation,//{ placeName: '', lat: '0', long: '0' },
+        : getprofile.profile.currentLocation || { placeName: '', lat: '0', long: '0' },//{ placeName: '', lat: '0', long: '0' },
       isActive: true,
       isDeleted: false,
       updatedAt: true

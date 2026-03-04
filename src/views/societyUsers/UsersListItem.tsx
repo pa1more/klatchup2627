@@ -1,36 +1,34 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, Image, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, Image, View, Alert, ActivityIndicator } from 'react-native';
 import GradientBorderView from '../../components/GradientBorderView';
-import Colors from '../../theme/Colors'
-import Fonts from '../../theme/Fonts';
-import { connectDatabaseEmulator } from '@react-native-firebase/database';
+import { DesignSystem } from '../../theme/DesignSystem';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from '../../store';
 import { updateFreindProfileRequest, updateProfileRequest } from '../../slices/profile';
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 20,
-    marginVertical: 5,
+    borderRadius: DesignSystem.borderRadius.xl,
+    marginVertical: DesignSystem.spacing.xs,
   },
   btn: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    backgroundColor: '#300943',
-    borderRadius: 20,
+    paddingHorizontal: DesignSystem.spacing.md,
+    paddingVertical: DesignSystem.spacing.md,
+    backgroundColor: DesignSystem.colors.primary,
+    borderRadius: DesignSystem.borderRadius.xl,
   },
   imgDp: {
     height: 80,
     width: 80,
-    borderRadius: 20,
+    borderRadius: DesignSystem.borderRadius.xl,
   },
   containerDp: {
-    borderRadius: 20,
+    borderRadius: DesignSystem.borderRadius.xl,
   },
   textAge: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontFamily: DesignSystem.typography.fontFamily.primary,
     position: 'absolute',
     bottom: 0,
     right: 5,
@@ -39,14 +37,14 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
   },
   textName: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontFamily: DesignSystem.typography.fontFamily.primary,
     position: 'absolute',
-    top: 5,              // space from top
-    right: 5,            // space from right
-    maxWidth: '90%',     // prevent overflow from container
-    textAlign: 'right',  // align text to right edge
-    flexWrap: 'wrap',    // allow text to wrap
+    top: 5,
+    right: 5,
+    maxWidth: '90%',
+    textAlign: 'right',
+    flexWrap: 'wrap',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
@@ -54,49 +52,52 @@ const styles = StyleSheet.create({
   containerInterests: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginLeft: 10,
+    marginLeft: DesignSystem.spacing.md,
     flex: 1,
   },
   containerInterest: {
-    marginHorizontal: 5,
+    marginHorizontal: DesignSystem.spacing.xs,
     borderWidth: 1,
-    borderColor: Colors.white,
-    borderRadius: 20,
-    paddingHorizontal: 5,
-    marginVertical: 4,
+    borderColor: DesignSystem.colors.white,
+    borderRadius: DesignSystem.borderRadius.xl,
+    paddingHorizontal: DesignSystem.spacing.xs,
+    marginVertical: DesignSystem.spacing.xs,
   },
   textInterest: {
-    color: Colors.white,
-    fontSize: 12,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontSize: DesignSystem.typography.sizes.sm,
+    fontFamily: DesignSystem.typography.fontFamily.primary,
   },
   textRequested: {
-    color: Colors.white,
-    fontSize: 14,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontSize: DesignSystem.typography.sizes.base,
+    fontFamily: DesignSystem.typography.fontFamily.primary,
   },
   containerRequested: {
-    backgroundColor: '#555555',
+    backgroundColor: DesignSystem.colors.gray[600],
     position: 'absolute',
     right: 0,
     top: 0,
     zIndex: 10,
-    borderTopRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    borderTopRightRadius: DesignSystem.borderRadius.xl,
+    borderBottomLeftRadius: DesignSystem.borderRadius.xl,
+    paddingVertical: DesignSystem.spacing.xs,
+    paddingHorizontal: DesignSystem.spacing.md,
   },
   button: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 5,
-    margin: 1,
+    paddingVertical: DesignSystem.spacing.md,
+    paddingHorizontal: DesignSystem.spacing.md,
+    backgroundColor: DesignSystem.colors.success,
+    borderBottomLeftRadius: DesignSystem.borderRadius.xl,
+    borderBottomRightRadius: DesignSystem.borderRadius.xl,
   },
   textAccept: {
-    fontSize: 13,
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    ...DesignSystem.typography.styles.button,
+    color: DesignSystem.colors.white,
+    fontWeight: '400',
   },
 })
 
@@ -139,6 +140,7 @@ const UsersListItem = ({
   onPress,
 }: Props) => {
 
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const getprofile: any = useSelector((state: RootState) => state.profile.mobileCheck);
@@ -183,9 +185,22 @@ const UsersListItem = ({
 
   const onAcceptPress = () => {
 
-    console.log("tressed")
+    console.log("🎯 Klatchup button pressed for:", item.name)
+    // Guard check: ensure profile exists
+    if (!getprofile?.profile?.profileId) {
+      console.warn('Profile data not available');
+      Alert.alert('Error', 'Your profile data is not loaded. Please try again.');
+      return;
+    }
+    
+    setIsLoading(true);
+    console.log('📤 Sending Klatchup request for:', item.name);
+    console.log('   From user:', getprofile.profile.name, 'ID:', getprofile.profile.profileId);
+    console.log('   To user:', item.name, 'ID:', item.profileId);
+    
     let friendreqArr = addUserIdToResponse(temp_friend, getprofile.profile.profileId);
-    console.log(friendreqArr)
+    console.log('   Updated friendRequest array:', friendreqArr);
+    
     const profile = {
       name: item.name,
       mobile: item.mobile,
@@ -195,20 +210,27 @@ const UsersListItem = ({
       city: item.city,
       bio: item.bio,
       profilePicture: item.profilePicture,
-      showPictures: JSON.parse(item.showPictures),
+      showPictures: typeof item.showPictures === 'string' ? JSON.parse(item.showPictures) : item.showPictures,
       work: item.work,
       education: item.education,
       friendRequest: friendreqArr,
-      friends: JSON.parse(item.friends),
+      friends: typeof item.friends === 'string' ? JSON.parse(item.friends) : item.friends,
       lookingFor: item.lookingFor,
-      currentLocation: JSON.parse(item.currentLocation),
+      currentLocation: typeof item.currentLocation === 'string' ? JSON.parse(item.currentLocation) : item.currentLocation,
       isActive: true,
       isDeleted: false,
       updatedAt: true
     };
-    console.log(profile)
+    console.log('   Dispatching update to API');
     const profileId = item.profileId;
     dispatch(updateFreindProfileRequest({ profile, profileId }));
+    
+    setTimeout(() => {
+      setIsLoading(false);
+      Alert.alert('✅ Klatchup Sent!', `Your Klatchup request has been sent to ${item.name}`);
+      console.log('✅ Klatchup request sent successfully');
+    }, 500);
+    
     onProfileUpdated();
   }
 
@@ -253,27 +275,41 @@ const UsersListItem = ({
       </TouchableOpacity> */}
       {/* {
         loggedInUserFriendReq.user_ids.includes(item?.profileId) ? (
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.textAccept}>Requested</Text>
+          <TouchableOpacity style={styles.button} disabled>
+            <Text style={[styles.textAccept, { fontWeight: '600' }]}>✓ Requested</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.button} onPress={() => onAcceptPress()}>
-            <Text style={styles.textAccept}>Send Request</Text>
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => onAcceptPress()}
+            disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator color="#ffffff" size="small" />
+            ) : (
+              <Text style={[styles.textAccept, { fontWeight: '600' }]}>🎯 Klatchup</Text>
+            )}
           </TouchableOpacity>
         )
       } */}
       {
         loggedInUserFriends.user_ids.includes(item?.profileId) ? (
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.textAccept}>Request accepted</Text>
+          <TouchableOpacity style={styles.button} disabled>
+            <Text style={[styles.textAccept, { fontWeight: '600' }]}>✓ Friends</Text>
           </TouchableOpacity>
         ) : loggedInUserFriendReq.user_ids.includes(item?.profileId) ? (
           <TouchableOpacity style={styles.button}>
             <Text style={styles.textAccept}>Requested</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.button} onPress={() => onAcceptPress()}>
-            <Text style={styles.textAccept}>Send Request</Text>
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => onAcceptPress()}
+            disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator color="#ffffff" size="small" />
+            ) : (
+              <Text style={[styles.textAccept, { fontWeight: '600' }]}>🎯 Klatchup</Text>
+            )}
           </TouchableOpacity>
         )
       }

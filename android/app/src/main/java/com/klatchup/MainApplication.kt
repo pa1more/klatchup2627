@@ -11,7 +11,8 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
-import io.invertase.firebase.auth.ReactNativeFirebaseAuthPackage;
+import io.invertase.firebase.auth.ReactNativeFirebaseAuthPackage
+import com.klatchup.app.BuildConfig
 
 class MainApplication : Application(), ReactApplication {
 

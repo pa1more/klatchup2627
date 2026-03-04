@@ -8,8 +8,7 @@ import {
   View,
 } from 'react-native'
 import Modal from 'react-native-modal'
-import Colors from '../theme/Colors';
-import Fonts from '../theme/Fonts';
+import { DesignSystem } from '../theme/DesignSystem';
 import LinearGradient from 'react-native-linear-gradient'
 
 const styles = StyleSheet.create({
@@ -25,8 +24,8 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   textTitle: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontWeight: '400',
     fontSize: 16,
     textAlign: 'center',
     padding: 10,
@@ -55,8 +54,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   textOption: {
-    color: Colors.white,
-    fontFamily: Fonts.PromptRegular,
+    color: DesignSystem.colors.white,
+    fontWeight: '400',
     fontSize: 14,
     textAlign: 'center',
     marginLeft: 20,

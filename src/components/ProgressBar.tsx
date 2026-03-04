@@ -1,12 +1,12 @@
 import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native'
 import React from 'react'
 import LinearGradient from 'react-native-linear-gradient'
-import Colors from '../theme/Colors'
+import { DesignSystem } from '../theme/DesignSystem'
 
 const styles = StyleSheet.create({
   container: {
     height: 4,
-    backgroundColor: Colors.white,
+    backgroundColor: DesignSystem.colors.white,
     borderRadius: 10,
   },
   containerProgress: {

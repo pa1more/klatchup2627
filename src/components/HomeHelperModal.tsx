@@ -11,7 +11,6 @@ import {
   Dimensions,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import Fonts from '../theme/Fonts';
 import Dialog from '../assets/svg/Dialog';
 
 const {height, width} = Dimensions.get('window');
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
   },
   textDialog: {
     fontSize: 13,
-    fontFamily: Fonts.PromptRegular,
+    fontWeight: '400',
     textAlign: 'center',
     color: '#4D1469',
   },

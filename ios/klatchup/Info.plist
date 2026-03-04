@@ -26,14 +26,19 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Klatchup needs camera access to take profile photos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Klatchup uses your location to find nearby places and people.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Klatchup needs access to save photos you take.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Klatchup needs photo library access to select profile photos.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
