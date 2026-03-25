@@ -51,6 +51,8 @@ yarn-error.log
 **/fastlane/Preview.html
 **/fastlane/screenshots
 **/fastlane/test_output
+**/fastlane/*.json
+**/fastlane/.env
 
 # Bundle artifact
 *.jsbundle
@@ -88,4 +90,17 @@ firebase-debug.log
 firebase-functions-log.log
 firestore-debug.log
 ui-debug.log
+
+# Android signing keystores (SECURITY: never commit keystores to git)
+*.jks
+
+# Android signing credentials (SECURITY: never commit passwords to git)
+android/keystore.properties
+
+# Firebase config files (contain API keys - provide via CI/CD secrets)
+android/app/google-services.json
+android/app/google-services*.json
+android/google-services.json
+android/google-services*.json
+ios/GoogleService-Info.plist
 
