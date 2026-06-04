@@ -22,25 +22,40 @@ target 'klatchup' do
   )
   post_install do |installer|
     react_native_post_install(installer, config[:reactNativePath], :mac_catalyst_enabled => false)
-    
+
+    # Fix glog header issues with Xcode 16
+    glog_target = installer.pods_project.targets.find { |t| t.name == 'glog' }
+    if glog_target
+      glog_target.build_configurations.each do |bc|
+        bc.build_settings['HEADER_SEARCH_PATHS'] ||= ''
+        bc.build_settings['HEADER_SEARCH_PATHS'] += ' $(PODS_ROOT)/glog/src'
+        bc.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+      end
+
+      # Fix the umbrella header to use angle brackets instead of quotes
+      umbrella_path = File.join(installer.sandbox.pod_dir('glog'), 'Target Support Files/glog/glog-umbrella.h')
+      if File.exist?(umbrella_path)
+        content = File.read(umbrella_path)
+        modified = content.gsub(/#import "([^"]+)"/, '#import <glog/\1>')
+        File.write(umbrella_path, modified) if modified != content
+      end
+    end
+
     # Disable non-modular include warnings globally to work around Xcode 16+ strictness
     installer.pods_project.targets.each do |t|
       t.build_configurations.each do |bc|
         # Set deployment target
         bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
-        
+
         # Override the default Xcode 16 compiler flags for modular includes
-        # We need to completely replace the existing flags with our version
         current_cflags = bc.build_settings['OTHER_CFLAGS'] || ''
-        # Remove -Werror=non-modular-include-in-framework-module if present
         current_cflags = current_cflags.gsub('-Werror=non-modular-include-in-framework-module', '-Wno-error=non-modular-include-in-framework-module').strip
         bc.build_settings['OTHER_CFLAGS'] = "#{current_cflags} -Wno-error=non-modular-include-in-framework-module -Wno-error=return-type"
-        
+
         current_cxxflags = bc.build_settings['OTHER_CPLUSPLUSFLAGS'] || ''
         current_cxxflags = current_cxxflags.gsub('-Werror=non-modular-include-in-framework-module', '-Wno-error=non-modular-include-in-framework-module').strip
         bc.build_settings['OTHER_CPLUSPLUSFLAGS'] = "#{current_cxxflags} -Wno-error=non-modular-include-in-framework-module -Wno-error=return-type"
-        
-        # Attempt to override modular framework setting
+
         bc.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
         bc.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
       end
