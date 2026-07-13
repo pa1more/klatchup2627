@@ -1,0 +1,4 @@
+app_identifier("com.klatchup.app")
+apple_dev_portal_id(ENV["APPLE_ID"]) if ENV["APPLE_ID"]
+itc_team_id("H85UFHZTXA")
+team_id("H85UFHZTXA")

@@ -1,0 +1,6 @@
+package_name("com.klatchup.app")
+
+# Use an env var to avoid hardcoding credential paths in source control.
+# Example:
+# export GOOGLE_PLAY_JSON_KEY_PATH="$PWD/fastlane/play-service-account.json"
+json_key_file(ENV["GOOGLE_PLAY_JSON_KEY_PATH"]) if ENV["GOOGLE_PLAY_JSON_KEY_PATH"]

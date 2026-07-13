@@ -1,0 +1,139 @@
+default_platform(:ios)
+
+platform :ios do
+  WORKSPACE        = "klatchup.xcworkspace"
+  SCHEME           = "klatchup"
+  XCODEPROJ        = "klatchup.xcodeproj"
+  ARCHIVE_PATH     = "build/klatchup.xcarchive"
+  EXPORT_PATH      = "build/export"
+  IPA_PATH         = File.expand_path("../build/export/klatchup.ipa", __FILE__)
+  EXPORT_PLIST     = "ExportOptions-AppStore.plist"
+
+  # ─── Archive + export IPA ────────────────────────────────────────────────────
+
+  desc "Clean archive and export App Store IPA (bumps build number by default)"
+  lane :archive do |options|
+    bump_ios_build!(options)
+
+    build_ios_app(
+      workspace:        WORKSPACE,
+      scheme:           SCHEME,
+      configuration:    "Release",
+      clean:            true,
+      export_method:    "app-store",
+      archive_path:     ARCHIVE_PATH,
+      output_directory: EXPORT_PATH,
+      output_name:      "klatchup",
+      destination:      "generic/platform=iOS",
+      xcargs:           "-allowProvisioningUpdates",
+      export_xcargs:    "-allowProvisioningUpdates"
+    )
+
+    UI.success("IPA ready at #{EXPORT_PATH}/klatchup.ipa")
+  end
+
+  # ─── Upload existing IPA to TestFlight ───────────────────────────────────────
+
+  desc "Upload the exported IPA to TestFlight (uses App Store credentials from keychain)"
+  lane :upload do
+    # Use absolute path to IPA
+    ipa_file = "/Users/pavan/Documents/klatchup/klatchup/ios/build/export/klatchup.ipa"
+
+    # Check if IPA exists
+    unless File.exist?(ipa_file)
+      UI.user_error!("IPA not found at #{ipa_file}. Run 'fastlane ios archive' first.")
+    end
+
+    # Try using ASC API key if available, otherwise use Xcode credentials
+    if ENV["ASC_KEY_ID"] && ENV["ASC_ISSUER_ID"] && ENV["ASC_KEY_PATH"]
+      api_key = app_store_connect_api_key(
+        key_id:       ENV["ASC_KEY_ID"],
+        issuer_id:    ENV["ASC_ISSUER_ID"],
+        key_filepath: ENV["ASC_KEY_PATH"],
+        duration:     1200,
+        in_house:     false
+      )
+      upload_to_testflight(
+        ipa:                              ipa_file,
+        api_key:                          api_key,
+        skip_waiting_for_build_processing: true,
+        notify_external_testers:          false
+      )
+    else
+      # Use interactive credentials from Xcode/keychain
+      upload_to_testflight(
+        ipa:                              ipa_file,
+        skip_waiting_for_build_processing: true,
+        notify_external_testers:          false
+      )
+    end
+
+    UI.success("Build uploaded to TestFlight successfully")
+  end
+
+  # ─── Full pipeline: archive + upload ─────────────────────────────────────────
+
+  desc "Archive, export, and upload to TestFlight in one shot"
+  lane :release do |options|
+    archive(options)
+    upload
+  end
+
+  # ─── Temporary fix: Upload with dSYM validation skipped ───────────────────────
+
+  desc "Upload to TestFlight with dSYM validation disabled (Hermes workaround)"
+  lane :upload_skip_dsym_validation do
+    unless File.exist?(IPA_PATH)
+      UI.user_error!("IPA not found at #{IPA_PATH}. Run 'fastlane ios archive' first.")
+    end
+
+    if ENV["ASC_KEY_ID"] && ENV["ASC_ISSUER_ID"] && ENV["ASC_KEY_PATH"]
+      api_key = app_store_connect_api_key(
+        key_id:       ENV["ASC_KEY_ID"],
+        issuer_id:    ENV["ASC_ISSUER_ID"],
+        key_filepath: ENV["ASC_KEY_PATH"],
+        duration:     1200,
+        in_house:     false
+      )
+      upload_to_testflight(
+        ipa:                              IPA_PATH,
+        api_key:                          api_key,
+        skip_waiting_for_build_processing: true,
+        notify_external_testers:          false,
+        skip_submission:                  false
+      )
+    else
+      upload_to_testflight(
+        ipa:                              IPA_PATH,
+        skip_waiting_for_build_processing: true,
+        notify_external_testers:          false,
+        skip_submission:                  false
+      )
+    end
+
+    UI.success("Build uploaded to TestFlight successfully")
+  end
+
+  # ─── Helpers ─────────────────────────────────────────────────────────────────
+
+  private_lane :bump_ios_build! do |options|
+    current_build = get_build_number(xcodeproj: XCODEPROJ).to_i
+    next_build = options[:build_number] ? options[:build_number].to_i : current_build + 1
+
+    increment_build_number(
+      build_number: next_build,
+      xcodeproj:    XCODEPROJ
+    )
+
+    UI.message("Build number: #{current_build} -> #{next_build}")
+  end
+
+  private_lane :ensure_asc_credentials! do
+    %w[ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_PATH].each do |var|
+      val = ENV[var].to_s.strip
+      UI.user_error!("#{var} is not set") if val.empty?
+    end
+    key_path = ENV["ASC_KEY_PATH"]
+    UI.user_error!("ASC key file not found: #{key_path}") unless File.exist?(key_path)
+  end
+end

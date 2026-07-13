@@ -118,8 +118,8 @@ firebase: {
 
 ### firebase-backend/.env
 ```env
-PROJECT_ID=klatchup-pavan2
-GOOGLE_PLACES_API_KEY=AIzaSyDvttN1QsfsfXUPddce4Fr4aqalIfp2ELg
+PROJECT_ID=your-firebase-project-id
+GOOGLE_PLACES_API_KEY=your_google_places_api_key_here
 NODE_ENV=production
 REGION=us-central1
 ```

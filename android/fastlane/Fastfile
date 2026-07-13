@@ -1,0 +1,76 @@
+default_platform(:android)
+
+platform :android do
+  APP_GRADLE_FILE = "app/build.gradle"
+  AAB_PATH = "app/build/outputs/bundle/release/app-release.aab"
+
+  desc "Build release AAB for internal testing (bumps versionCode by default)"
+  lane :build_internal do |options|
+    ensure_play_credentials!
+    bump_android_version!(options)
+
+    gradle(
+      task: "clean bundle",
+      build_type: "Release"
+    )
+
+    UI.user_error!("AAB not found at #{AAB_PATH}") unless File.exist?(AAB_PATH)
+    UI.success("AAB generated at #{AAB_PATH}")
+  end
+
+  desc "Build and upload AAB to Google Play Internal track"
+  lane :internal do |options|
+    build_internal(options)
+
+    upload_to_play_store(
+      track: "internal",
+      aab: AAB_PATH,
+      package_name: "com.klatchup.app",
+      json_key: ENV["GOOGLE_PLAY_JSON_KEY_PATH"],
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: false,
+      release_status: "completed"
+    )
+
+    UI.success("Uploaded to Play Internal track successfully")
+  end
+
+  private_lane :ensure_play_credentials! do
+    key_path = ENV["GOOGLE_PLAY_JSON_KEY_PATH"]
+    UI.user_error!("GOOGLE_PLAY_JSON_KEY_PATH is not set") if key_path.to_s.strip.empty?
+    UI.user_error!("Google Play key file not found: #{key_path}") unless File.exist?(key_path)
+  end
+
+  private_lane :bump_android_version! do |options|
+    gradle_file = APP_GRADLE_FILE
+    content = File.read(gradle_file)
+
+    current_code_match = content.match(/versionCode\s+(\d+)/)
+    UI.user_error!("Could not find versionCode in #{gradle_file}") unless current_code_match
+
+    current_name_match = content.match(/versionName\s+"([^"]+)"/)
+    UI.user_error!("Could not find versionName in #{gradle_file}") unless current_name_match
+
+    current_code = current_code_match[1].to_i
+    current_name = current_name_match[1]
+
+    next_code = if options[:version_code]
+                  options[:version_code].to_i
+                else
+                  current_code + 1
+                end
+
+    next_name = options[:version_name].to_s.strip
+    next_name = current_name if next_name.empty?
+
+    updated = content.gsub(/versionCode\s+\d+/, "versionCode #{next_code}")
+    updated = updated.gsub(/versionName\s+"[^"]+"/, "versionName \"#{next_name}\"")
+
+    File.write(gradle_file, updated)
+
+    UI.message("Updated versionCode: #{current_code} -> #{next_code}")
+    UI.message("Using versionName: #{next_name}")
+  end
+end

@@ -75,7 +75,7 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 
-# Firebase
+# Firebase & Credentials
 .env
 .env.*
 !.env.example
@@ -83,13 +83,35 @@ serviceAccountKey.json
 *-key.json
 *firebase-adminsdk*.json
 service-account.json
-google-services.json.backup
+google-services.json
+google-services*.json
+google-services-*.json
+GoogleService-Info.plist
 GoogleService-Info.plist.backup
 .firebase/
 firebase-debug.log
 firebase-functions-log.log
 firestore-debug.log
 ui-debug.log
+*.p8
+AuthKey_*.p8
+
+# API Keys and Credentials
+.env.local
+.env.*.local
+.env.production.local
+*.key
+*.pem
+
+# Build artifacts and logs
+build_archive.log
+ios_device_build.log
+.metro-health-check*
+
+# Temporary test files
+tmp_*.js
+test-*.js
+test-*.sh
 
 # Android signing keystores (SECURITY: never commit keystores to git)
 *.jks

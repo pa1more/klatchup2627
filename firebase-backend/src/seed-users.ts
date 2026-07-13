@@ -9,7 +9,7 @@ function getServiceAccount() {
   const possiblePaths = [
     path.join(process.cwd(), 'service-account.json'),
     path.join(process.cwd(), '.env.service-account.json'),
-    path.join(os.homedir(), '.firebase', 'klatchup-pavan2-service-account.json'),
+    path.join(os.homedir(), '.firebase', 'service-account.json'),
   ];
 
   for (const filePath of possiblePaths) {
@@ -23,18 +23,19 @@ function getServiceAccount() {
 }
 
 if (!admin.apps.length) {
+  const projectId = process.env.FIREBASE_PROJECT_ID || 'your-firebase-project-id';
   const serviceAccount = getServiceAccount();
-  
+
   if (serviceAccount) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
-      projectId: 'klatchup-pavan2'
+      projectId
     });
     console.log('✅ Using service account credentials');
   } else {
     // Fallback: use default credentials (Firebase CLI login)
     admin.initializeApp({
-      projectId: 'klatchup-pavan2'
+      projectId
     });
     console.log('⚠️  Using Firebase CLI authentication (make sure you\'re logged in with: firebase login)');
   }

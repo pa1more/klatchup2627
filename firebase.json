@@ -1,9 +1,9 @@
 {
   "projects": {
-    "default": "klatchup-pavan2"
+    "default": "your-firebase-project"
   },
   "targets": {
-    "klatchup-pavan2": {
+    "your-firebase-project": {
       "functions": [
         {
           "source": "firebase-backend",

@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>38</string>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -35,6 +35,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Klatchup needs camera access to take profile photos.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Klatchup uses your location to find nearby places and people, and to automatically check you in or out when you move far away.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Klatchup uses your location to find nearby places and people.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

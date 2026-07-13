@@ -14,3 +14,12 @@ IPHONEOS_DEPLOYMENT_TARGET = 15.1
 
 // Enable modular headers for better compatibility
 CLANG_ENABLE_MODULES = YES
+
+// Hermes dSYM fix - Disable dSYM entirely to avoid React Native Hermes UUID mismatch
+DEBUG_INFORMATION_FORMAT = dwarf
+GCC_GENERATE_DEBUG_SYMBOLS = NO
+STRIP_INSTALLED_PRODUCT = YES
+
+// Disable dSYM generation for hermes-engine to avoid UUID mismatch errors
+// This is a known issue with React Native Hermes framework
+SKIP_INSTALL = NO
